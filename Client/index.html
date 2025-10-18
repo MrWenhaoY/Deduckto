@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deduckto</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script> -->
+    <!-- <script src="component.js"></script> -->
+    <!-- <script src="player.js"></script> -->
+</head>
+<body style="overflow: hidden; overscroll-behavior: none;">
+    <canvas id="canvas"></canvas>
+    <script src="index.js"></script>
+    <div class="home">
+        <div id="start-menu" class="reset-home">
+            <div class="center-buttons elementToFadeIn">
+                <!-- <div class="object-container elementToFadeIn">
+                    <div class="object1">
+                        <div class="object-rope"></div>
+                        <div class="object-shape"></div>
+                    </div>
+                    <div class="object2">
+                        <div class="object-rope"></div>
+                        <div class="object-shape"></div>
+                    </div>
+                    <div class="object3">
+                        <div class="object-rope"></div>
+                        <div class="object-shape"></div>
+                    </div>
+                </div> -->
+                <h1>Deduckto</h1>
+                <button class="home-button" onclick="newGame()">Create New Game</button>
+                <button class="home-button" onclick="showReq()">Join Existing Game</button>
+            </div>
+            <div class="screen-lobby elementToFadeIn">
+                <h1>Game ID: <span id="game-id"></span></h1>
+                <p>Players Present: <span id="num-players">0</span></p>
+                <button class="home-button" onclick="startGame()">START</button>
+            </div>
+            <!-- <div class="permissions elementToFadeIn">
+                <h2>This game requires Motion and Orientation permissions to run. Please press the button below to request permissions.</h>
+                <button class="home-button home-button2" style="--c:#E95A49" onclick="window.requestPermissions(showJoin)">Request Permissions</button>
+            </div> -->
+            <div class="player-lobby elementToFadeIn">
+                <h1>Input Code:</h1>
+                <input id="join-code" style="margin-right: 4px;">
+                <button class="home-button home-button2" onclick="joinGame()">Join</button>
+            </div>
+            <div class="waiting-room elementToFadeIn">
+                <h1>You have joined <span id="game-id-2"></span></h1>
+                <p>Players Present: <span id="num-players-2">0</span></p>
+                <p>Controls: [TODO: Instructions will be added later.]
+                    <!-- TODO -->
+                </p>
+            </div>
+        </div>
+        <div id="player-button" class="noselect"></div>
+</body>
+</html>
