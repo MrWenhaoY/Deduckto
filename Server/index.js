@@ -3,7 +3,7 @@ const express = require('express');
 const socketio = require('socket.io');
 const path = require('node:path');
 const l = require('./lobby.js');
-// const g = require('./game.js');
+const g = require('./game.js');
 
 const clientPath = path.join(__dirname, '../Client');
 console.log('Serving static from ' + clientPath);
@@ -13,6 +13,7 @@ app.use(express.static(clientPath));
 
 const server = http.createServer(app);
 const io = socketio(server);
+const sockets = io.sockets.sockets; // Maps socketids to sockets
 
 io.on('connection', (socket) => {
     socket.emit('message','You are connected!'); // send a msg to client
@@ -67,19 +68,18 @@ io.on('connection', (socket) => {
         }
     });
 
-//     socket.on('start', (data)=> {
-//         if (!data) return;
+    socket.on('start', (data)=> {
+        // if (!data) return;
         
-//         // data: {height: window.innerHeight, ratio: ratio}
-//         const lobby = l.sockets[socket.id];
-//         //if (lobby !== undefined && lobby.screenSocket === socket.id && lobby.playerSockets.length >= 1 && lobby.game === undefined) {//
-//         if (lobby !== undefined && lobby.screenSocket === socket.id && lobby.playerSockets.length === 2 && lobby.game === undefined) {
-//             lobby.game = new g.Game(lobby, data.height/data.ratio, data.ratio);
-//             io.to(lobby.id).emit('gameStart', lobby);
-//             lobby.game.changes = [];
-//             console.log(socket.id + ' started game: ' + lobby.id); //
-//         }
-//     });
+        const lobby = l.sockets[socket.id];
+        if (lobby !== undefined && lobby.game === undefined) {
+            lobby.game = new g.Game(lobby);
+
+            lobby.playerSockets.forEach(p => sockets.get(p)?.emit('gameStart', lobby.game.sanitized(p)));
+
+            console.log(socket.id + ' started game: ' + lobby.id); //
+        }
+    });
 
 //     // Game events
 //     socket.on('move', (movement) => {
