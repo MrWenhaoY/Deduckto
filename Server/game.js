@@ -26,6 +26,7 @@ function match(c1, c2) {
 class Game {
     constructor(lobby, N=7) {
         if (!(N >= 1)) throw new Error("Invalid # of attribute variants: " + N);
+        this.N = N;
         this.deck = this.create_deck(N); // Decks start out shuffled
         this.players = [];
 
@@ -110,13 +111,14 @@ class Game {
     }
 
     guess(playerSocket, guess) {
-        const player = this.players.find(p => p.name == playerSocket);
-        if (!player || !Array.isArray(guess) || guess.length !== 3) return FAILURE;
+        const playerIndex = this.players.findIndex(p => p.name == playerSocket);
+        const player = this.players[playerIndex];
+        if (!player || !Array.isArray(guess) || guess.length !== 3 || guess.some(i => !(i >= 0 && i < this.N))) return FAILURE;
 
         const result = [0, 1, 2].every(i => player.secret[i] === guess[i]);
         if (result) {
             // Do game end
-            return {success: true, win: true, guess: guess, card: player.secret};
+            return {success: true, win: true, guess: guess, card: player.secret, playerIndex};
         }
         // Bad guess
         player.guesses += 1;
@@ -124,7 +126,9 @@ class Game {
             // TODO: Player lost
             
         }
-        return {success: true, win: false, guess: guess, guesses: player.guesses};
+
+        this.turn = (this.turn + 1) % this.NUM_PLAYERS;
+        return {success: true, win: false, guess: guess, guesses: player.guesses, playerIndex: playerIndex, newTurn: this.turn};
     }
 
     // Creates a sanitized gamestate for the specified player
@@ -133,6 +137,7 @@ class Game {
         if (!(playerIndex >= 0)) return undefined;
 
         const gameState = {
+            N: this.N,
             turn: this.turn,
             deckSize: this.deck.length,
             playerIndex: playerIndex,

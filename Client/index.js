@@ -100,7 +100,7 @@ socket.on('gameStart', (gameState) => {
 
     document.getElementById('turn').innerText = game.turn;
     document.getElementById('deck-size').innerText = game.deckSize;
-
+    [0, 1, 2].forEach(i => document.getElementById('guess'+i).max = game.N - 1);
 });
 
 socket.on('newDisconnect', (length)=> {
@@ -128,6 +128,26 @@ socket.on('cardPlayed', (data) => {
     game.turn = data.newTurn;
 });
 
+socket.on('guessMade', (data) => {
+    console.log("Player " + data.playerIndex + " made guess '" + data.guess + "' and " + (data.win ? "won" : "failed"));
+    
+    if (data.win) {
+        // TODO: Resolve a win
+        console.log("Game over. Player " + data.playerIndex + " has won.")
+    } else {
+        // Guess failed
+        // TODO: Implement pile flipping
+    }
+
+    const player = game.players[data.playerIndex];
+    if (data.playerIndex == game.playerIndex) {
+        // TODO: Implement failed guess pile flipping
+    }
+        
+    player.guesses = data.guesses;
+    console.log("Player " + data.playerIndex + " has guessed " + data.guesses + " times.")
+    game.turn = data.newTurn;
+});
 
 
 function showJoin() {
@@ -156,6 +176,11 @@ function playCard() {
     const index = document.getElementById("playCard-index").value;
     socket.emit("play", index);
     console.log("Playing card " + index);
+}
+
+function makeGuess() {
+    const guess = [0, 1, 2].map(i => parseInt(document.getElementById('guess'+i).value));
+    socket.emit("guess", guess);
 }
 
 // //graphics

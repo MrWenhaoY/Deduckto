@@ -100,6 +100,22 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('guess', (guess) => {
+        const lobby = l.sockets[socket.id];
+        let game;
+        if (lobby !== undefined && (game = lobby.game)) {
+            result = game.guess(socket.id, guess);
+            if (result.success) {
+                console.log(socket.id + " make guess " + guess);
+                io.to(lobby.id).emit("guessMade", result);
+                // TODO: Implement game loss for bad guess
+                // TODO: Implement game win / game end
+            } else {
+                console.log(socket.id + " failed to guess: " + guess);
+            }
+        }
+    });
+
 //     socket.on('move', (movement) => {
 //         // movement is a number between -80 and 80
 //         const lobby = l.sockets[socket.id];
