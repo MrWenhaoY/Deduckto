@@ -81,7 +81,25 @@ io.on('connection', (socket) => {
         }
     });
 
-//     // Game events
+    // Game events
+    socket.on('play', (cardId) => {
+        const lobby = l.sockets[socket.id];
+        let game;
+        if (lobby !== undefined && (game = lobby.game)) {
+            result = game.play(socket.id, cardId);
+            if (result.success) {
+                console.log(socket.id + " played card " + result.card + " at index " + cardId);
+                socket.emit("cardPlayed", result);
+                delete result.cardDrawn;
+                lobby.playerSockets.forEach(p => {
+                    if (p !== socket.id) sockets.get(p)?.emit('cardPlayed', lobby.game.sanitized(p));
+                });
+            } else {
+                console.log(socket.id + " failed to play: " + cardId);
+            }
+        }
+    });
+
 //     socket.on('move', (movement) => {
 //         // movement is a number between -80 and 80
 //         const lobby = l.sockets[socket.id];
@@ -90,7 +108,7 @@ io.on('connection', (socket) => {
 //             console.log(socket.id + " is moving " + movement);
 //             game.players[socket.id].vx = (movement > 0 ? 1 : -1) * Math.min(Math.abs(movement)/5, 15);
 //         }
-//     });6
+//     });
 
 //     socket.on('action', (data) => {
 //         // Action is a string of the action

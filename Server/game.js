@@ -71,11 +71,12 @@ class Game {
     // Attempts to draw a card to that player
     draw(player) {
         if (this.deck.length > 0) {
-            player.hand.push(this.deck.shift());
+            const card = this.deck.shift();
+            player.hand.push(card);
             player.handSize++;
-            return true;
+            return {success: true, card: card};
         }
-        return false;
+        return FAILURE;
     }
 
     play(playerSocket, cardIndex) {
@@ -87,10 +88,24 @@ class Game {
         if (!card) return FAILURE;
 
         player.hand.splice(cardIndex, 1);
-        result = match(card, player.secret);
-        (result > 0 ? player.yes : player.no).push(card)
+        const pile = match(card, player.secret);
+        (pile > 0 ? player.yes : player.no).push(card);
+        
+        // Automatically attempt to draw card and end turn
+        const result = this.draw(player);
 
-        return {success: true, card: card, pile: result, cardIndex: cardIndex};
+        this.turn = (this.turn + 1) % this.NUM_PLAYERS;
+
+        return {
+            success: true, 
+            card: card, 
+            pile: pile, 
+            cardIndex: cardIndex, 
+            playerIndex: playerIndex,
+            draw: result.success,
+            cardDrawn: result.card,
+            newTurn: this.turn
+        };
     }
 
     guess(playerSocket, guess) {

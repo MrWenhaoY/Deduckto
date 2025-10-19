@@ -11,7 +11,7 @@
     <!-- <script src="player.js"></script> -->
 </head>
 <body style="overflow: hidden; overscroll-behavior: none;">
-    <canvas id="canvas"></canvas>
+    <!-- <canvas id="canvas"></canvas> -->
     <script src="index.js"></script>
     <div class="home">
         <div id="start-menu" class="reset-home">
@@ -32,7 +32,7 @@
                 </div> -->
                 <h1>Deduckto</h1>
                 <button class="home-button" onclick="newGame()">Create New Game</button>
-                <button class="home-button" onclick="showReq()">Join Existing Game</button>
+                <button class="home-button" onclick="showJoin()">Join Existing Game</button>
             </div>
             <div class="screen-lobby elementToFadeIn">
                 <h1>Game ID: <span id="game-id"></span></h1>
@@ -56,6 +56,11 @@
                 </p>
             </div>
         </div>
-        <div id="player-button" class="noselect"></div>
+        <div id="game" class="noselect" style="display:none;">
+            <p>Active player: <span id="turn"></span></p>
+            <p>Deck Size: <span id="deck-size"></span></p>
+            <input id="playCard-index">
+            <button class="home-button" onclick="playCard()">Play Card</button>
+        </div>
 </body>
 </html>
