@@ -24,8 +24,9 @@ function match(c1, c2) {
 }
 
 class Game {
-    constructor(lobby) {
-        this.deck = this.create_deck(7); // Decks start out shuffled
+    constructor(lobby, N=7) {
+        if (!(N >= 1)) throw new Error("Invalid # of attribute variants: " + N);
+        this.deck = this.create_deck(N); // Decks start out shuffled
         this.players = [];
 
         // Assumes there are enough cards to 
@@ -115,15 +116,15 @@ class Game {
         const result = [0, 1, 2].every(i => player.secret[i] === guess[i]);
         if (result) {
             // Do game end
-            return {success: true, win: true, card: player.secret};
+            return {success: true, win: true, guess: guess, card: player.secret};
         }
         // Bad guess
         player.guesses += 1;
         if (player.guesses >= 3) {
-            // Player lost
+            // TODO: Player lost
             
         }
-        return {success: true, win: false, guesses: player.guesses};
+        return {success: true, win: false, guess: guess, guesses: player.guesses};
     }
 
     // Creates a sanitized gamestate for the specified player

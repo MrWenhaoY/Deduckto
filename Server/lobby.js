@@ -30,7 +30,7 @@ class Lobby {
     }
 
     addPlayer(id) {
-        if (this.playerSockets.length < 4 && !this.playerSockets.some(p => p == id)) {
+        if (!this.game && this.playerSockets.length < 4 && !this.playerSockets.some(p => p == id)) {
             this.playerSockets.push(id);
             return true;
         }
