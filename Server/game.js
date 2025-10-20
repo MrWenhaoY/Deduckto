@@ -65,7 +65,7 @@ class Game {
         for (let i = 0; i < n; i++) {
             for (let j = 0; j < n; j++) {
                 // deck.push([i, j, perm0[(i + perm1[j]) % n]]);
-                deck.push([perm0[i], j, perm1[j]]);
+                deck.push([perm0[i], j, (i + perm1[j]) % n]);
             }
         }
 
