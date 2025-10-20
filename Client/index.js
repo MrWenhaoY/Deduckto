@@ -105,12 +105,19 @@ socket.on('gameStart', (gameState) => {
         let elem = document.createElement("p");
         let text = document.createTextNode("Secret: "); // And then create a list of no's
         let slot = document.createElement("span");
+        slot.classList.add("card-list");
         slot.id = "secret" + i;
         elem.appendChild(text);
         elem.appendChild(slot);
         div.appendChild(elem);
-        text = document.createTextNode((i == playerIndex) ? "???" : skin.parse(p.secret));
-        slot.appendChild(text);
+        if (i === playerIndex) {
+            text = document.createTextNode("???");
+            slot.appendChild(text);
+        } else {
+            generateList(slot, [p.secret], false);
+        }
+        // text = document.createTextNode((i == playerIndex) ? "???" : skin.parse(p.secret));
+        // slot.appendChild(text);
         
         elem = document.createElement("p");
         text = document.createTextNode("Yes: "); // And then create a list of no's

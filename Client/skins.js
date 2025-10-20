@@ -17,7 +17,7 @@ const Skins = {
         parse: (card) => "<div class='card-container'> \
   <img class='card-img' src='Assets/color" + card[0] + ".png' alt='Image 1' /> \
   <img class='card-img' src='Assets/person" + card[1] + ".png' alt='Image 2' /> \
-  <img class='card-img' src='Assets/item0.png' alt='Image 3' /> \
+  <img class='card-img' src='Assets/item" + card[2] + ".png' alt='Image 3' /> \
 </div>"
             
         // parse: (card) => "<img class='card-img' src='Assets/sample_card.png' alt='" + card + "'/>"
