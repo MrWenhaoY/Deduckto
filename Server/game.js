@@ -59,13 +59,13 @@ class Game {
         if (n < 1) return undefined;
         
         // The method currently used does not generate all possible decks
-        const [perm0, perm1] = [permutation(n), permutation(n)];
+        const [perm0, perm1, perm2] = [permutation(n), permutation(n), permutation(n)];
         
         const deck = [];
         for (let i = 0; i < n; i++) {
             for (let j = 0; j < n; j++) {
-                // deck.push([i, j, perm0[(i + perm1[j]) % n]]);
-                deck.push([perm0[i], j, (i + perm1[j]) % n]);
+                deck.push([perm2[i], j, perm0[(i + perm1[j]) % n]]);
+                // deck.push([perm0[i], j, (i + perm1[j]) % n]);
             }
         }
 
