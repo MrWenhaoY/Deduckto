@@ -1,13 +1,8 @@
-/* Figure out device via button input
- * Display: Button for starting game
- * Player: Shapes (based on accelerometer calculations)
- */
-//msgs
+// const s = require('./skins.js');
+// Set default skin
+const skin = Skins["test"];
+
 const socket = io();
-// let type = ''; //screen or player
-// const players = []; // Players in the game
-// let components = []; // Components in the game
-// let ratio = NaN;
 let game = undefined;
 let playerIndex = -1;
 
@@ -114,12 +109,13 @@ socket.on('gameStart', (gameState) => {
         elem.appendChild(text);
         elem.appendChild(slot);
         div.appendChild(elem);
-        text = document.createTextNode((i == playerIndex) ? "???" : p.secret);
+        text = document.createTextNode((i == playerIndex) ? "???" : skin.parse(p.secret));
         slot.appendChild(text);
         
         elem = document.createElement("p");
         text = document.createTextNode("Yes: "); // And then create a list of no's
         slot = document.createElement("span");
+        slot.classList.add("card-list");
         slot.id = "yes" + i;
         elem.appendChild(text);
         elem.appendChild(slot);
@@ -128,6 +124,7 @@ socket.on('gameStart', (gameState) => {
         elem = document.createElement("p");
         text = document.createTextNode("No: "); // And then create a list of no's
         slot = document.createElement("span");
+        slot.classList.add("card-list");
         slot.id = "no" + i;
         elem.appendChild(text);
         elem.appendChild(slot);
@@ -138,8 +135,9 @@ socket.on('gameStart', (gameState) => {
             elem = document.createElement("p");
             text = document.createTextNode("Hand: "); // And then create a list of no's
             slot = document.createElement("span");
+            slot.classList.add("card-list");
             slot.id = "hand";
-            generateHand(slot, p.hand);
+            generateList(slot, p.hand, true);
             elem.appendChild(text);
             elem.appendChild(slot);
             div.appendChild(elem);
@@ -149,12 +147,12 @@ socket.on('gameStart', (gameState) => {
     })
 });
 
-function generateHand(slot, arr) {
+function generateList(slot, arr, playable) {
     slot.innerHTML = "";
     arr.forEach((card, i) => {
         const elem = document.createElement("span");
-        elem.textContent = "(" + card + ") ";
-        elem.setAttribute("onclick", "playCard("+i+")");
+        elem.innerHTML = skin.parse(card) + " ";
+        if (playable) elem.setAttribute("onclick", "playCard("+i+")");
         slot.appendChild(elem);
     });
 }
@@ -179,7 +177,7 @@ socket.on('cardPlayed', (data) => {
             player.hand.push(data.cardDrawn);
             console.log("Drawn card: " + data.cardDrawn);
         }
-        generateHand(document.getElementById("hand"), player.hand);
+        generateList(document.getElementById("hand"), player.hand, true);
     }
         
     if (!data.draw) {
@@ -192,7 +190,8 @@ socket.on('cardPlayed', (data) => {
 
     // Display card
     const slot = document.getElementById((data.pile ? "yes" : "no") + data.playerIndex);
-    slot.textContent += " (" + data.card + ")";
+    generateList(slot, player[data.pile ? "yes" : "no"], false);
+    // slot.textContent += " " + skin.parse(data.card);
 
     game.turn = data.newTurn;
     document.getElementById("turn").textContent = game.turn;

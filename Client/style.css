@@ -20,6 +20,22 @@ canvas {
     left: 0px;
 }
 
+.card-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card-container {
+    /* position: relative; */
+    width: 141px;
+    height: 100px;
+}
+.card-img {
+    position: absolute;
+    width: 141px;
+    height: 100px;
+}
+
 .player {
     border: 1px solid black;
 }
