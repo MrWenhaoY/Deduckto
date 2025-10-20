@@ -7,11 +7,18 @@ const FAILURE = {success: false};
 
 // Shuffles an array in place
 function shuffle(arr) {
-  const len = arr.length;
-  for (let i = len - 1; i > 0; i--) {
-    const j = Math.floor((i + 1) * Math.random());
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
+    const len = arr.length;
+    for (let i = len - 1; i > 0; i--) {
+        const j = Math.floor((i + 1) * Math.random());
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+function permutation(n) {
+    const permutation = [];
+    for (let i = 0; i < n; i++) permutation.push(i);
+    shuffle(permutation);
+    return permutation
 }
 
 // Returns the number of coordinates in which the cards match 
@@ -52,17 +59,13 @@ class Game {
         if (n < 1) return undefined;
         
         // The method currently used does not generate all possible decks
-        const permutation = [];
-        for (let i = 0; i < n; i++) permutation.push(i);
-        shuffle(permutation);
-
-        const order = permutation.map(x => x);
-        shuffle(order);
+        const [perm0, perm1] = [permutation(n), permutation(n)];
         
         const deck = [];
         for (let i = 0; i < n; i++) {
             for (let j = 0; j < n; j++) {
-                deck.push([i, j, permutation[(i + order[j]) % n]]);
+                // deck.push([i, j, perm0[(i + perm1[j]) % n]]);
+                deck.push([perm0[i], j, perm1[j]]);
             }
         }
 
