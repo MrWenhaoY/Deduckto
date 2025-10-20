@@ -139,7 +139,7 @@ socket.on('gameStart', (gameState) => {
             text = document.createTextNode("Hand: "); // And then create a list of no's
             slot = document.createElement("span");
             slot.id = "hand";
-            slot.textContent = handToText(p.hand);
+            generateHand(slot, p.hand);
             elem.appendChild(text);
             elem.appendChild(slot);
             div.appendChild(elem);
@@ -149,10 +149,14 @@ socket.on('gameStart', (gameState) => {
     })
 });
 
-function handToText(arr) {
-    let text = "";
-    arr.forEach(card => text += "(" + card + ") ");
-    return text;
+function generateHand(slot, arr) {
+    slot.innerHTML = "";
+    arr.forEach((card, i) => {
+        const elem = document.createElement("span");
+        elem.textContent = "(" + card + ") ";
+        elem.setAttribute("onclick", "playCard("+i+")");
+        slot.appendChild(elem);
+    });
 }
 
 socket.on('newDisconnect', (length)=> {
@@ -175,10 +179,15 @@ socket.on('cardPlayed', (data) => {
             player.hand.push(data.cardDrawn);
             console.log("Drawn card: " + data.cardDrawn);
         }
-        document.getElementById("hand").textContent = handToText(player.hand);
+        generateHand(document.getElementById("hand"), player.hand);
     }
         
-    if (!data.draw) player.handSize--;
+    if (!data.draw) {
+        player.handSize--;
+    } else {
+        game.deckSize--;
+        document.getElementById("deck-size").textContent = game.deckSize;
+    }
     (data.pile ? player.yes : player.no).push(data.card);
 
     // Display card
@@ -186,6 +195,7 @@ socket.on('cardPlayed', (data) => {
     slot.textContent += " (" + data.card + ")";
 
     game.turn = data.newTurn;
+    document.getElementById("turn").textContent = game.turn;
 });
 
 socket.on('guessMade', (data) => {
@@ -232,8 +242,7 @@ function startGame() {
     console.log("Emit message 'start'");
 }
 
-function playCard() {
-    const index = document.getElementById("playCard-index").value;
+function playCard(index) {
     socket.emit("play", index);
     console.log("Playing card " + index);
 }
