@@ -9,7 +9,7 @@ const socket = io();
 // let components = []; // Components in the game
 // let ratio = NaN;
 let game = undefined;
-// let playerIndex = -1;
+let playerIndex = -1;
 
 socket.on('gameCreated', (lobby) => {
     console.log("Lobby: ")
@@ -90,6 +90,7 @@ socket.on('gameStart', (gameState) => {
     console.log("Recieved gameState: ");
     console.log(gameState);
     game = gameState;
+    playerIndex = game.playerIndex;
     // if (type === 'screen') {
     //     Object.values(lobby.game.players).forEach((p, i)=>players.push(new Player(p.x, p.y, p.name, i)));
     document.getElementById('start-menu').style.display = 'none';
@@ -101,7 +102,58 @@ socket.on('gameStart', (gameState) => {
     document.getElementById('turn').innerText = game.turn;
     document.getElementById('deck-size').innerText = game.deckSize;
     [0, 1, 2].forEach(i => document.getElementById('guess'+i).max = game.N - 1);
+    game.players.forEach((p, i) => {
+        const div = document.createElement("div");
+        div.id = "player" + i;
+        div.className = "player"
+
+        let elem = document.createElement("p");
+        let text = document.createTextNode("Secret: "); // And then create a list of no's
+        let slot = document.createElement("span");
+        slot.id = "secret" + i;
+        elem.appendChild(text);
+        elem.appendChild(slot);
+        div.appendChild(elem);
+        text = document.createTextNode((i == playerIndex) ? "???" : p.secret);
+        slot.appendChild(text);
+        
+        elem = document.createElement("p");
+        text = document.createTextNode("Yes: "); // And then create a list of no's
+        slot = document.createElement("span");
+        slot.id = "yes" + i;
+        elem.appendChild(text);
+        elem.appendChild(slot);
+        div.appendChild(elem);
+
+        elem = document.createElement("p");
+        text = document.createTextNode("No: "); // And then create a list of no's
+        slot = document.createElement("span");
+        slot.id = "no" + i;
+        elem.appendChild(text);
+        elem.appendChild(slot);
+        div.appendChild(elem);
+
+        if (i == playerIndex) {
+            // Create hand
+            elem = document.createElement("p");
+            text = document.createTextNode("Hand: "); // And then create a list of no's
+            slot = document.createElement("span");
+            slot.id = "hand";
+            slot.textContent = handToText(p.hand);
+            elem.appendChild(text);
+            elem.appendChild(slot);
+            div.appendChild(elem);
+        }
+
+        document.getElementById("players").appendChild(div);
+    })
 });
+
+function handToText(arr) {
+    let text = "";
+    arr.forEach(card => text += "(" + card + ") ");
+    return text;
+}
 
 socket.on('newDisconnect', (length)=> {
     document.getElementById('num-players').innerText = length;
@@ -110,7 +162,9 @@ socket.on('newDisconnect', (length)=> {
 
 /* Game */
 socket.on('cardPlayed', (data) => {
-    console.log("Player " + data.playerIndex + " played to pile '" + (data.pile ? "Yes" : "No") + "' card: " + data.card);
+    console.log("Received 'cardPlayed'");
+    console.log(data);
+    //console.log("Player " + data.playerIndex + " played to pile '" + (data.pile ? "Yes" : "No") + "' card: " + data.card);
     // console.log(data.card);
 
     const player = game.players[data.playerIndex];
@@ -121,10 +175,16 @@ socket.on('cardPlayed', (data) => {
             player.hand.push(data.cardDrawn);
             console.log("Drawn card: " + data.cardDrawn);
         }
+        document.getElementById("hand").textContent = handToText(player.hand);
     }
         
     if (!data.draw) player.handSize--;
     (data.pile ? player.yes : player.no).push(data.card);
+
+    // Display card
+    const slot = document.getElementById((data.pile ? "yes" : "no") + data.playerIndex);
+    slot.textContent += " (" + data.card + ")";
+
     game.turn = data.newTurn;
 });
 

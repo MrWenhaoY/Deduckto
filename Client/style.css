@@ -20,6 +20,14 @@ canvas {
     left: 0px;
 }
 
+.player {
+    border: 1px solid black;
+}
+
+/* #players {
+    display: flex;
+} */
+
 #controls {
     display: none;
 }
@@ -185,7 +193,7 @@ padding: 8px;
     width: 100%;
 }
 
-.object1 {
+/* .object1 {
     animation: sway 2.4s infinite;
     animation-timing-function: ease-in-out;
     -webkit-transform-origin: top;
@@ -230,4 +238,4 @@ padding: 8px;
     display: block;
     margin-left: 45%;
     bottom: 54px;
-}
+} */

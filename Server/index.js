@@ -92,7 +92,7 @@ io.on('connection', (socket) => {
                 socket.emit("cardPlayed", result);
                 delete result.cardDrawn;
                 lobby.playerSockets.forEach(p => {
-                    if (p !== socket.id) sockets.get(p)?.emit('cardPlayed', lobby.game.sanitized(p));
+                    if (p !== socket.id) sockets.get(p)?.emit('cardPlayed', result);
                 });
             } else {
                 console.log(socket.id + " failed to play: " + cardId);
