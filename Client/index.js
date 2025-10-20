@@ -1,6 +1,7 @@
 // const s = require('./skins.js');
 // Set default skin
-const skin = Skins["test"];
+// const skin = Skins["test"];
+const skin = new SkinLoader("tuple");
 
 const socket = io();
 let game = undefined;
