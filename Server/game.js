@@ -64,8 +64,8 @@ class Game {
         const deck = [];
         for (let i = 0; i < n; i++) {
             for (let j = 0; j < n; j++) {
-                deck.push([perm2[i], j, perm0[(i + perm1[j]) % n]]);
-                // deck.push([perm0[i], j, (i + perm1[j]) % n]);
+                // deck.push([perm2[i], j, perm0[(i + perm1[j]) % n]]);
+                deck.push([perm0[i], perm1[j], perm2[(i + j) % n]]);
             }
         }
 
