@@ -1,7 +1,5 @@
-// const s = require('./skins.js');
 // Set default skin
-// const skin = Skins["test"];
-const skin = new SkinLoader("tuple");
+const skin = new SkinLoader("maple");
 
 const socket = io();
 let game = undefined;
@@ -33,23 +31,7 @@ socket.on('newJoin', (length) => {
 //         });
 //         components = [];
 //         game.components.forEach(c=> {
-//             if (c.type == "flag") {
-//                 components.push(new Flag(c.x,c.y,c.width,c.height));
-//             }
-//             else if (c.type == "jackbox") {
-//                 let j = new JackBox(c.x, c.y, c.width, c.height);
-//                 if (c.isDone) j.turnsLeft = 0;
-//                 components.push(j);
-//             }
-//             else if (c.type == "ball") {
-//                 components.push(new Ball(c.x, c.y, c.width, c.height))
-
-//             }
-//             else if (c.type == "pump") {
-//                 components.push(new Pump(c.x, c.y, c.width, c.height))
-
-//             }
-//             else if (c.type == "popper") {
+//             if (c.type == "popper") {
 //                 components.push(new Popper(c.x, c.y, c.width, c.height))
 //                 if (c.isDone) 
 //                     confetti({
@@ -78,20 +60,13 @@ socket.on('lobby-closed', (lobbyId) => {
     alert('Host has left the lobby.');
 });
 
-// function actPlayer(type) {
-//     socket.emit('action',type);
-// }
-
 socket.on('gameStart', (gameState) => {
     console.log("Recieved gameState: ");
     console.log(gameState);
     game = gameState;
     playerIndex = game.playerIndex;
-    // if (type === 'screen') {
-    //     Object.values(lobby.game.players).forEach((p, i)=>players.push(new Player(p.x, p.y, p.name, i)));
+
     document.getElementById('start-menu').style.display = 'none';
-        
-    // } 
     document.getElementsByClassName('waiting-room')[0].style.display = 'none';
     document.getElementById('game').style.display = 'inline';
 
@@ -117,8 +92,6 @@ socket.on('gameStart', (gameState) => {
         } else {
             generateList(slot, [p.secret], false);
         }
-        // text = document.createTextNode((i == playerIndex) ? "???" : skin.parse(p.secret));
-        // slot.appendChild(text);
         
         elem = document.createElement("p");
         text = document.createTextNode("Yes: "); // And then create a list of no's
@@ -199,7 +172,6 @@ socket.on('cardPlayed', (data) => {
     // Display card
     const slot = document.getElementById((data.pile ? "yes" : "no") + data.playerIndex);
     generateList(slot, player[data.pile ? "yes" : "no"], false);
-    // slot.textContent += " " + skin.parse(data.card);
 
     game.turn = data.newTurn;
     document.getElementById("turn").textContent = game.turn;

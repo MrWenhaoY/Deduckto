@@ -116,15 +116,6 @@ io.on('connection', (socket) => {
         }
     });
 
-//     socket.on('move', (movement) => {
-//         // movement is a number between -80 and 80
-//         const lobby = l.sockets[socket.id];
-//         let game;
-//         if (lobby !== undefined && (game = lobby.game)) {
-//             console.log(socket.id + " is moving " + movement);
-//             game.players[socket.id].vx = (movement > 0 ? 1 : -1) * Math.min(Math.abs(movement)/5, 15);
-//         }
-//     });
 
 //     socket.on('action', (data) => {
 //         // Action is a string of the action

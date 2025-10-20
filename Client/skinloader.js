@@ -7,8 +7,6 @@ class SkinLoader {
             this.parse = data.parse;
         } else if (data.type === "image") {
             this.parse = (card) => {
-                console.log(data);//
-                console.log(card[0]);//
                 let html = "<div class='card-container'>";
                 [0, 1, 2].forEach(i => {
                     html += "<img class='card-img' src='Assets/";
