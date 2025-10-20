@@ -116,7 +116,7 @@ class Game {
     guess(playerSocket, guess) {
         const playerIndex = this.players.findIndex(p => p.name == playerSocket);
         const player = this.players[playerIndex];
-        if (!player || !Array.isArray(guess) || guess.length !== 3 || guess.some(i => !(i >= 0 && i < this.N && (i === i % 1)))) return FAILURE;
+        if (!player || !Array.isArray(guess) || guess.length !== 3 || guess.some(i => !((i >= 0) && (i < this.N) && (0 === i % 1)))) return FAILURE;
 
         const result = [0, 1, 2].every(i => player.secret[i] === guess[i]);
         if (result) {
