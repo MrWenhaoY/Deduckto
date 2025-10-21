@@ -7,10 +7,15 @@ class SkinLoader {
             throw new Error("# of variants (" + N + ") greater than maximum size of skin (" + this.data.max_size + ")");
         }
 
+        const NULLCARD = [-1, -1, -1];
+
         if (this.data.type === "text") {
-            this.parse = this.data.parse;
+            this.parse = (card) => {
+                return (card === null) ? this.data.null() : this.data.parse(card);
+            }
         } else if (this.data.type === "image") {
             this.parse = (card) => {
+                if (card === null) card = NULLCARD;
                 let html = "<div class='card-container'>";
                 [0, 1, 2].forEach(i => {
                     html += "<img class='card-img' src='Assets/";

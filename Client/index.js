@@ -65,7 +65,7 @@ socket.on('gameStart', (gameState) => {
     playerIndex = game.playerIndex;
 
     // Load skins
-    skin = new SkinLoader("tuple", game.N);
+    skin = new SkinLoader("maple", game.N);
 
     document.getElementById('start-menu').style.display = 'none';
     document.getElementsByClassName('waiting-room')[0].style.display = 'none';
@@ -148,11 +148,12 @@ function loadGame() {
 
     game.players.forEach((p, i) => {
         let elem = document.getElementById("secret"+i);
-        if (i === playerIndex) {
-            elem.innerText = "???"
-        } else {
-            generateList(elem, [p.secret], false);
-        }
+        generateList(elem, [p.secret], false);
+        // if (i === playerIndex) {
+        //     elem.innerText = "???"
+        // } else {
+        //     generateList(elem, [p.secret], false);
+        // }
         elem = document.getElementById("guesses"+i);
         elem.innerText = p.guesses;
 
