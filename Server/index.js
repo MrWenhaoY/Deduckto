@@ -124,7 +124,7 @@ io.on('connection', (socket) => {
         if (lobby !== undefined && (game = lobby.game)) {
             result = game.guess(socket.id, guess);
             if (result.success) {
-                console.log(socket.id + " make guess " + guess);
+                console.log(socket.id + " made guess " + guess);
                 io.to(lobby.id).emit("guessMade", result);
                 // TODO: Implement game loss for bad guess
                 // TODO: Implement game win / game end
@@ -134,17 +134,6 @@ io.on('connection', (socket) => {
         }
     });
 
-
-//     socket.on('action', (data) => {
-//         // Action is a string of the action
-//         console.log(socket.id + " has performed action: " + data);
-//         const lobby = l.sockets[socket.id];
-//         let game;
-//         if (lobby !== undefined && (game = lobby.game)) {
-//             game.action(data, game.players[socket.id]);
-//         }
-//     });
-// })
 
 // setInterval(()=> {
 //     Object.values(g.players).forEach(p=> {

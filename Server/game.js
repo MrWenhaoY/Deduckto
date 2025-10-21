@@ -1,8 +1,3 @@
-
-// const lineLineCross = require('./collision.js');
-// const players = [];
-//const tickables = [];
-
 const FAILURE = {success: false};
 
 // Shuffles an array in place
@@ -221,34 +216,6 @@ class Player {
 
         return playerState;
     }
-
-    // update(game) {
-    //     this.x += this.vx;
-    //     //prevent out of bounds
-    //     if (this.x < 0 + 60 || this.x > 2000 - 60) {// 60 is approximately half the width of the puppet
-    //         this.x -= this.vx;
-    //         this.vx = 0;
-    //     }
-    //     this.vx *= 0.95; // Fiddle with the number as necessary
-    //     if (Math.abs(this.vx) < 1) this.vx = 0;
-    //     // TODO: Implement gravity for vy
-    //     this.y += this.vy;
-    //     this.vy += 0.80; // Gravity, fiddle with as necessary
-    //     if (this.y >= game.floorHeight - 220 - 200) { // 200 is the height of the ground
-    //         this.vy = 0;
-    //         this.y = game.floorHeight - 220 - 200; // 210 is the height of the puppet, estimated
-    //     }
-        
-    // }
-
-    // checkCollisions() {
-    //     this.game.components.forEach((c) => {
-    //         if (c.collide(this)){
-    //             this.x -= this.vx;
-    //             this.vx = 0;
-    //         }
-    //     });
-    // }
 }
 
 module.exports = {Game, Player, GAMEPHASE}

@@ -39,10 +39,6 @@
                 <p>Players Present: <span id="num-players">0</span></p>
                 <button class="home-button" onclick="startGame()">START</button>
             </div>
-            <!-- <div class="permissions elementToFadeIn">
-                <h2>This game requires Motion and Orientation permissions to run. Please press the button below to request permissions.</h>
-                <button class="home-button home-button2" style="--c:#E95A49" onclick="window.requestPermissions(showJoin)">Request Permissions</button>
-            </div> -->
             <div class="player-lobby elementToFadeIn">
                 <h1>Input Code:</h1>
                 <input id="join-code" style="margin-right: 4px;">
@@ -65,11 +61,8 @@
             <select id="guess0"></select>
             <select id="guess1"></select>
             <select id="guess2"></select>
-
-            <!-- <input id="guess0" type="number" min="0" max="7" step="1">
-            <input id="guess1" type="number" min="0" max="7" step="1">
-            <input id="guess2" type="number" min="0" max="7" step="1"> -->
             <button onclick="makeGuess()">Guess</button>
+
             <div id="players">
 
             </div>

@@ -8,7 +8,6 @@ let playerIndex = -1;
 socket.on('gameCreated', (lobby) => {
     console.log("Lobby: ")
     console.log(lobby);
-    // type = 'screen';
     document.getElementById('game-id').innerText = lobby.id;
     document.getElementById('num-players').innerText = 1;
     document.getElementById('num-players-2').innerText = 1;
@@ -102,12 +101,6 @@ socket.on('gameStart', (gameState) => {
         elem.appendChild(text);
         elem.appendChild(slot);
         div.appendChild(elem);
-        // if (i === playerIndex) {
-        //     text = document.createTextNode("???");
-        //     slot.appendChild(text);
-        // } else {
-        //     generateList(slot, [p.secret], false);
-        // }
         
         elem = document.createElement("p");
         text = document.createTextNode("Yes: "); // And then create a list of no's
@@ -218,7 +211,6 @@ socket.on('cardPlayed', (data) => {
     console.log("Received 'cardPlayed'");
     console.log(data);
     //console.log("Player " + data.playerIndex + " played to pile '" + (data.pile ? "Yes" : "No") + "' card: " + data.card);
-    // console.log(data.card);
 
     const player = game.players[data.playerIndex];
     if (data.playerIndex == game.playerIndex) {
