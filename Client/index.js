@@ -87,8 +87,16 @@ socket.on('gameStart', (gameState) => {
         div.className = "player"
 
         let elem = document.createElement("p");
-        let text = document.createTextNode("Secret: ");
+        let text = document.createTextNode("Player: " + i + " | Guesses: ");
         let slot = document.createElement("span");
+        slot.id = "guesses" + i;
+        elem.appendChild(text);
+        elem.appendChild(slot);
+        div.appendChild(elem);
+
+        elem = document.createElement("p");
+        text = document.createTextNode("Secret: ");
+        slot = document.createElement("span");
         slot.classList.add("card-list");
         slot.id = "secret" + i;
         elem.appendChild(text);
@@ -150,6 +158,8 @@ function loadGame() {
         } else {
             generateList(elem, [p.secret], false);
         }
+        elem = document.getElementById("guesses"+i);
+        elem.innerText = p.guesses;
 
         elem = document.getElementById("yes"+i);
         generateList(elem, p.yes, false);
@@ -253,9 +263,13 @@ socket.on('guessMade', (data) => {
         // TODO: Implement failed guess pile flipping
     }
         
-    player.guesses = data.guesses;
     console.log("Player " + data.playerIndex + " has guessed " + data.guesses + " times.")
+
+    player.guesses = data.guesses;
+    document.getElementById("guesses"+data.playerIndex).textContent = data.guesses;
+    
     game.turn = data.newTurn;
+    document.getElementById("turn").textContent = game.turn;
 });
 
 
