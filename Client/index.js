@@ -1,7 +1,6 @@
 // Set default skin
-const skin = new SkinLoader("maple");
-
 const socket = io();
+let skin = undefined;
 let game = undefined;
 let playerIndex = -1;
 
@@ -64,6 +63,9 @@ socket.on('gameStart', (gameState) => {
     console.log(gameState);
     game = gameState;
     playerIndex = game.playerIndex;
+
+    // Load skins
+    skin = new SkinLoader("tuple", game.N);
 
     document.getElementById('start-menu').style.display = 'none';
     document.getElementsByClassName('waiting-room')[0].style.display = 'none';

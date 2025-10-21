@@ -7,6 +7,7 @@ const SKINS = {
     tuple: {
         name: "tuple",
         type: "text",
+        max_size: 10,
         parse: (card) => "(" + card + ")",
         cat0_names: digits,
         cat1_names: digits,
@@ -15,6 +16,7 @@ const SKINS = {
     greek: {
         name: "greek",
         type: "text",
+        max_size: 10,
         parse: (card) => "[" + ALPHABET[card[0]] + card[1] + COMMONGREEK[card[2]] + "]",
         cat0_names: ALPHABET,
         cat1_names: digits,

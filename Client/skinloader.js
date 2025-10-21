@@ -1,7 +1,11 @@
 class SkinLoader {
-    constructor(name) {
+    constructor(name, N) {
         this.data = SKINS[name];
         if (!this.data) throw new Error("Cannot load skin: " + name);
+
+        if (N > this.data.max_size) {
+            throw new Error("# of variants (" + N + ") greater than maximum size of skin (" + this.data.max_size + ")");
+        }
 
         if (this.data.type === "text") {
             this.parse = this.data.parse;
