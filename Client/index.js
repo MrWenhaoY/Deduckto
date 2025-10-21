@@ -245,26 +245,29 @@ socket.on('cardPlayed', (data) => {
 socket.on('guessMade', (data) => {
     console.log("Player " + data.playerIndex + " made guess '" + data.guess + "' and " + (data.win ? "won" : "failed"));
     
+    const player = game.players[data.playerIndex];
     if (data.win) {
         // TODO: Resolve a win
         console.log("Game over. Player " + data.playerIndex + " has won.")
     } else {
         // Guess failed
-        // TODO: Implement pile flipping
-    }
-
-    const player = game.players[data.playerIndex];
-    if (data.playerIndex == game.playerIndex) {
-        // TODO: Implement failed guess pile flipping
-    }
+        if (data.hostage !== undefined) {
+            player[data.hostage ? "yes" : "no"].fill(null);
+            if (data.playerIndex == game.playerIndex) {
+                console.log(data.hostage)
+                document.getElementById("hostage").removeChild(document.getElementById("hostage"+data.hostage));
+            // TODO: Implement loss on guess #3
+            }
+        }
         
+    }
     console.log("Player " + data.playerIndex + " has guessed " + data.guesses + " times.")
-
     player.guesses = data.guesses;
-    document.getElementById("guesses"+data.playerIndex).textContent = data.guesses;
+    // document.getElementById("guesses"+data.playerIndex).textContent = data.guesses;
     
     game.turn = data.newTurn;
-    document.getElementById("turn").textContent = game.turn;
+    // document.getElementById("turn").textContent = game.turn;
+    loadGame();
 });
 
 
@@ -300,7 +303,7 @@ function playCard(index) {
 function makeGuess() {
     if (game.phase === 1 && game.turn === playerIndex) {
         const guess = [0, 1, 2].map(i => parseInt(document.getElementById('guess'+i).value));
-        socket.emit("guess", guess);
+        socket.emit("guess", [guess, parseInt(document.getElementById("hostage").value)]);
     }
 }
 

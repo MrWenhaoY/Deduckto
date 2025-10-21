@@ -150,11 +150,14 @@ class Game {
         };
     }
 
-    guess(playerSocket, guess) {
+    guess(playerSocket, guess, hostage) {
         const playerIndex = this.players.findIndex(p => p.name == playerSocket);
         const player = this.players[playerIndex];
         if (this.phase !== GAMEPHASE.PLAY || this.turn !== playerIndex) return FAILURE;
         if (!player || !isValidCard(guess, this.N)) return FAILURE;
+        if (player.unflipped.length > 0 && !(player.unflipped.findIndex(x => x === hostage) >= 0)) return FAILURE;
+        
+        if (player.guesses >= 2) hostage = undefined;
 
         const result = [0, 1, 2].every(i => player.secret[i] === guess[i]);
         if (result) {
@@ -164,13 +167,23 @@ class Game {
         }
         // Bad guess
         player.guesses += 1;
+        if (hostage !== undefined) player.unflipped = player.unflipped.filter(x => x != hostage);
+        console.log(player.unflipped);//
         if (player.guesses >= 3) {
             // TODO: Player is out of the game
             
         }
 
         this.turn = (this.turn + 1) % this.NUM_PLAYERS;
-        return {success: true, win: false, guess: guess, guesses: player.guesses, playerIndex: playerIndex, newTurn: this.turn};
+        return {
+            success: true, 
+            win: false, 
+            guess: guess, 
+            guesses: player.guesses, 
+            playerIndex: playerIndex, 
+            newTurn: this.turn, 
+            hostage: hostage
+        };
     }
 
     // Creates a sanitized gamestate for the specified player
@@ -200,6 +213,7 @@ class Player {
         this.yes = [];
         this.no = [];
         this.guesses = 0;
+        this.unflipped = [0, 1]; // Piles unflipped. 0=no, 1=yes
     }
 
     sanitized(name) {
