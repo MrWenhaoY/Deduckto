@@ -296,14 +296,14 @@ function startGame() {
 }
 
 function playCard(index) {
-    if (game.phase < 2) {
+    if (game.phase === 0 || (game.phase === 1 && game.turn === playerIndex)) {
         socket.emit("play", index);
         console.log("Playing card " + index);
     }
 }
 
 function makeGuess() {
-    if (game.phase === 1) {
+    if (game.phase === 1 && game.turn === playerIndex) {
         const guess = [0, 1, 2].map(i => parseInt(document.getElementById('guess'+i).value));
         socket.emit("guess", guess);
     }
