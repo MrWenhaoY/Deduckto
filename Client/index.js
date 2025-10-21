@@ -69,12 +69,8 @@ socket.on('gameStart', (gameState) => {
     document.getElementById('start-menu').style.display = 'none';
     document.getElementsByClassName('waiting-room')[0].style.display = 'none';
     document.getElementById('game').style.display = 'inline';
-
-
-
-    document.getElementById('turn').innerText = game.turn;
-    document.getElementById('deck-size').innerText = game.deckSize;
-    // [0, 1, 2].forEach(i => document.getElementById('guess'+i).max = game.N - 1);
+    
+    // Set up guess
     [0, 1, 2].forEach(i => {
         const guess = document.getElementById('guess'+i);
         for (let j = 0; j < game.N; j++) {
@@ -98,12 +94,12 @@ socket.on('gameStart', (gameState) => {
         elem.appendChild(text);
         elem.appendChild(slot);
         div.appendChild(elem);
-        if (i === playerIndex) {
-            text = document.createTextNode("???");
-            slot.appendChild(text);
-        } else {
-            generateList(slot, [p.secret], false);
-        }
+        // if (i === playerIndex) {
+        //     text = document.createTextNode("???");
+        //     slot.appendChild(text);
+        // } else {
+        //     generateList(slot, [p.secret], false);
+        // }
         
         elem = document.createElement("p");
         text = document.createTextNode("Yes: "); // And then create a list of no's
@@ -130,15 +126,42 @@ socket.on('gameStart', (gameState) => {
             slot = document.createElement("span");
             slot.classList.add("card-list");
             slot.id = "hand";
-            generateList(slot, p.hand, true);
+            // generateList(slot, p.hand, true);
             elem.appendChild(text);
             elem.appendChild(slot);
             div.appendChild(elem);
         }
 
         document.getElementById("players").appendChild(div);
-    })
+    });
+
+    loadGame();
 });
+
+function loadGame() {
+    document.getElementById('phase').innerText = game.phase;
+    document.getElementById('turn').innerText = game.turn;
+    document.getElementById('deck-size').innerText = game.deckSize;
+
+    game.players.forEach((p, i) => {
+        let elem = document.getElementById("secret"+i);
+        if (i === playerIndex) {
+            elem.innerText = "???"
+        } else {
+            generateList(elem, [p.secret], false);
+        }
+
+        elem = document.getElementById("yes"+i);
+        generateList(elem, p.yes, false);
+        elem = document.getElementById("no"+i);
+        generateList(elem, p.no, false);
+
+        if (i == playerIndex) {
+            elem = document.getElementById("hand");
+            generateList(elem, p.hand, true);
+        }
+    });
+}
 
 function generateList(slot, arr, playable) {
     slot.innerHTML = "";
@@ -150,12 +173,37 @@ function generateList(slot, arr, playable) {
     });
 }
 
+// Returns the number of coordinates in which the cards match 
+function match(c1, c2) {
+    let sum = 0;
+    for (let i = 0; i < 3; i++) {
+        sum += c1[i] == c2[i] ? 1 : 0
+    }
+    return sum;
+}
+
 socket.on('newDisconnect', (length)=> {
     document.getElementById('num-players').innerText = length;
     document.getElementById('num-players-2').innerText = length;
 });
 
 /* Game */
+socket.on("setupPlayed", (cardIndex) => {
+    console.log("Setup played card " + cardIndex);
+    if (game.phase === 0) {
+        const player = game.players[playerIndex];
+        card = player.hand.splice(cardIndex, 1)[0];
+        const nextPlayer = game.players[(playerIndex + 1) % game.players.length];
+        nextPlayer[match(card, nextPlayer.secret) ? "yes" : "no"].push(card);
+        loadGame();
+    }
+})
+
+socket.on("beginPlay", (gameState) => {
+    game = gameState;
+    loadGame();
+});
+
 socket.on('cardPlayed', (data) => {
     console.log("Received 'cardPlayed'");
     console.log(data);
@@ -234,13 +282,17 @@ function startGame() {
 }
 
 function playCard(index) {
-    socket.emit("play", index);
-    console.log("Playing card " + index);
+    if (game.phase < 2) {
+        socket.emit("play", index);
+        console.log("Playing card " + index);
+    }
 }
 
 function makeGuess() {
-    const guess = [0, 1, 2].map(i => parseInt(document.getElementById('guess'+i).value));
-    socket.emit("guess", guess);
+    if (game.phase === 1) {
+        const guess = [0, 1, 2].map(i => parseInt(document.getElementById('guess'+i).value));
+        socket.emit("guess", guess);
+    }
 }
 
 // //graphics

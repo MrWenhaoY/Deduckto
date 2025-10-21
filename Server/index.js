@@ -86,17 +86,35 @@ io.on('connection', (socket) => {
         const lobby = l.sockets[socket.id];
         let game;
         if (lobby !== undefined && (game = lobby.game)) {
-            result = game.play(socket.id, cardId);
-            if (result.success) {
-                console.log(socket.id + " played card " + result.card + " at index " + cardId);
-                socket.emit("cardPlayed", result);
-                delete result.cardDrawn;
-                lobby.playerSockets.forEach(p => {
-                    if (p !== socket.id) sockets.get(p)?.emit('cardPlayed', result);
-                });
-            } else {
-                console.log(socket.id + " failed to play: " + cardId);
+            const phase = game.phase;
+            if (phase === g.GAMEPHASE.PLAY) {
+                result = game.play(socket.id, cardId);
+                if (result.success) {
+                    console.log(socket.id + " played card " + result.card + " at index " + cardId);
+                    socket.emit("cardPlayed", result);
+                    delete result.cardDrawn;
+                    lobby.playerSockets.forEach(p => {
+                        if (p !== socket.id) sockets.get(p)?.emit('cardPlayed', result);
+                    });
+                } else {
+                    console.log(socket.id + " failed to play: " + cardId);
+                }
+            } else if (phase === g.GAMEPHASE.SETUP) {
+                result = game.setup_play(socket.id, cardId);
+                if (result.success) {
+                    console.log(socket.id + " played (setup) card " + result.card + " at index " + cardId);
+                    socket.emit("setupPlayed", cardId);
+
+                    if (result.phase === g.GAMEPHASE.PLAY) {
+                        lobby.playerSockets.forEach(p => {
+                            sockets.get(p)?.emit('beginPlay', game.sanitized(p));
+                        });
+                    }
+                } else {
+                    console.log(socket.id + " failed to play (setup): " + cardId);
+                }
             }
+            
         }
     });
 

@@ -122,7 +122,7 @@ class Game {
         const ready = this.players.every(p => p.yes.length + p.no.length > 0);
         if (ready) this.phase = GAMEPHASE.PLAY;
 
-        return {success: true, phase: this.phase};
+        return {success: true, phase: this.phase, card: card};
     }
 
     play(playerSocket, cardIndex) {
@@ -185,6 +185,7 @@ class Game {
 
         const gameState = {
             N: this.N,
+            phase: this.phase,
             turn: this.turn,
             deckSize: this.deck.length,
             playerIndex: playerIndex,
@@ -250,4 +251,4 @@ class Player {
     // }
 }
 
-module.exports = {Game, Player}
+module.exports = {Game, Player, GAMEPHASE}
