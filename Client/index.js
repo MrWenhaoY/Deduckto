@@ -70,16 +70,28 @@ socket.on('gameStart', (gameState) => {
     document.getElementsByClassName('waiting-room')[0].style.display = 'none';
     document.getElementById('game').style.display = 'inline';
 
+
+
     document.getElementById('turn').innerText = game.turn;
     document.getElementById('deck-size').innerText = game.deckSize;
-    [0, 1, 2].forEach(i => document.getElementById('guess'+i).max = game.N - 1);
+    // [0, 1, 2].forEach(i => document.getElementById('guess'+i).max = game.N - 1);
+    [0, 1, 2].forEach(i => {
+        const guess = document.getElementById('guess'+i);
+        for (let j = 0; j < game.N; j++) {
+            const option = document.createElement('option');
+            option.value = j;
+            option.text = skin.getName(i, j);
+            guess.appendChild(option);
+        }
+    });
+    
     game.players.forEach((p, i) => {
         const div = document.createElement("div");
         div.id = "player" + i;
         div.className = "player"
 
         let elem = document.createElement("p");
-        let text = document.createTextNode("Secret: "); // And then create a list of no's
+        let text = document.createTextNode("Secret: ");
         let slot = document.createElement("span");
         slot.classList.add("card-list");
         slot.id = "secret" + i;
