@@ -21,6 +21,10 @@ function permutation(n) {
     return permutation
 }
 
+function isValidCard(card, n) {
+    return Array.isArray(card) && card.length === 3 && card.every(i => (i >= 0) && (i < n) && (i % 1 === 0) && (typeof i === "number"));
+}
+
 // Returns the number of coordinates in which the cards match 
 function match(c1, c2) {
     let sum = 0;
@@ -30,14 +34,21 @@ function match(c1, c2) {
     return sum;
 }
 
+const GAMEPHASE = {
+    SETUP: 0, // Players select a card to give to their neighbor
+    PLAY: 1, // Game is in progress
+    END: 2 // Game has ended
+}
+
 class Game {
     constructor(lobby, N=7) {
         if (!(N >= 1)) throw new Error("Invalid # of attribute variants: " + N);
         this.N = N;
         this.deck = this.create_deck(N); // Decks start out shuffled
-        this.players = [];
+        this.turn = 0;
+        this.phase = GAMEPHASE.SETUP;
 
-        // Assumes there are enough cards to 
+        this.players = [];       
         lobby.playerSockets.forEach(p => this.players.push(new Player(p)));
         this.NUM_PLAYERS = this.players.length;
 
@@ -51,7 +62,10 @@ class Game {
             for (let i = 0; i < 5; i++) this.draw(p);
         });
 
-        this.turn = 0;
+        // Skip setup for 1 player games
+        /* 1 player games are not defined by official rules.
+           Current implementation is to skip the initial card entirely */
+        if (this.NUM_PLAYERS === 1) this.phase = GAMEPHASE.PLAY;
     }
 
     // Create a deck where each attribute has n variants
@@ -84,9 +98,36 @@ class Game {
         return FAILURE;
     }
 
+    // Play a matching card for the next player (index + 1)
+    // If you don't have a matching card, play a non-matching card instead
+    setup_play(playerSocket, cardIndex) {
+        const playerIndex = this.players.findIndex(p => p.name == playerSocket);
+        if (playerIndex == -1 || this.phase !== GAMEPHASE.SETUP) return FAILURE;
+        
+        const player = this.players[playerIndex];
+        const card = player.hand[cardIndex];
+        const nextPlayer = this.players[(playerIndex + 1) % this.NUM_PLAYERS]
+        if (!card || nextPlayer.yes.length > 0 || nextPlayer.no.length > 0) return FAILURE;
+
+        // PLay the card if valid
+        if (match(card, nextPlayer.secret)) {
+            nextPlayer.yes.push(card);
+        } else if(!player.hand.some(c => match(c, nextPlayer.secret))) {
+            nextPlayer.no.push(card);
+        } else return FAILURE;
+        player.hand.splice(cardIndex, 1);
+        this.draw(player);
+
+        // Progress phase if everyone is ready
+        const ready = this.players.every(p => p.yes.length + p.no.length > 0);
+        if (ready) this.phase = GAMEPHASE.PLAY;
+
+        return {success: true, phase: this.phase};
+    }
+
     play(playerSocket, cardIndex) {
         const playerIndex = this.players.findIndex(p => p.name == playerSocket);
-        if (this.turn !== playerIndex) return FAILURE;
+        if (this.turn !== playerIndex || this.phase !== GAMEPHASE.PLAY) return FAILURE;
 
         const player = this.players[playerIndex];
         const card = player.hand[cardIndex];
@@ -109,24 +150,27 @@ class Game {
             playerIndex: playerIndex,
             draw: result.success,
             cardDrawn: result.card,
-            newTurn: this.turn
+            newTurn: this.turn,
+            phase: this.phase
         };
     }
 
     guess(playerSocket, guess) {
         const playerIndex = this.players.findIndex(p => p.name == playerSocket);
         const player = this.players[playerIndex];
-        if (!player || !Array.isArray(guess) || guess.length !== 3 || guess.some(i => !((i >= 0) && (i < this.N) && (0 === i % 1)))) return FAILURE;
+        if (this.phase !== GAMEPHASE.PLAY || this.turn !== playerIndex) return FAILURE;
+        if (!player || !isValidCard(guess, this.N)) return FAILURE;
 
         const result = [0, 1, 2].every(i => player.secret[i] === guess[i]);
         if (result) {
             // Do game end
+            this.phase = GAMEPHASE.END;
             return {success: true, win: true, guess: guess, card: player.secret, playerIndex};
         }
         // Bad guess
         player.guesses += 1;
         if (player.guesses >= 3) {
-            // TODO: Player lost
+            // TODO: Player is out of the game
             
         }
 
