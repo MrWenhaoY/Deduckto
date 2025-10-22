@@ -244,11 +244,20 @@ socket.on('cardPlayed', (data) => {
 
 socket.on('guessMade', (data) => {
     console.log("Player " + data.playerIndex + " made guess '" + data.guess + "' and " + (data.win ? "won" : "failed"));
-    
     const player = game.players[data.playerIndex];
     if (data.win) {
         // TODO: Resolve a win
         console.log("Game over. Player " + data.playerIndex + " has won.")
+        if (data.playerIndex === playerIndex) {
+            confetti({
+                origin: {y:-0.19},
+                particleCount: 1000,
+                spread: 200,
+                startVelocity: 50,
+                gravity: 2.4,
+                ticks: 170,
+            });
+        }
     } else {
         // Guess failed
         if (data.hostage !== undefined) {
