@@ -135,7 +135,7 @@ class Game {
         // Automatically attempt to draw card and end turn
         const result = this.draw(player);
 
-        this.turn = (this.turn + 1) % this.NUM_PLAYERS;
+        this.nextTurn();
 
         return {
             success: true, 
@@ -163,20 +163,16 @@ class Game {
         if (result) {
             // Do game end
             this.phase = GAMEPHASE.END;
-            return {success: true, win: true, guess: guess, card: player.secret, playerIndex};
+            return {success: true, end: true, win: true, guess: guess, card: player.secret, playerIndex};
         }
         // Bad guess
         player.guesses += 1;
         if (hostage !== undefined) player.unflipped = player.unflipped.filter(x => x != hostage);
-        console.log(player.unflipped);//
-        if (player.guesses >= 3) {
-            // TODO: Player is out of the game
-            
-        }
-
-        this.turn = (this.turn + 1) % this.NUM_PLAYERS;
-        return {
+        
+        this.nextTurn();
+        const output = {
             success: true, 
+            end: false,
             win: false, 
             guess: guess, 
             guesses: player.guesses, 
@@ -184,6 +180,26 @@ class Game {
             newTurn: this.turn, 
             hostage: hostage
         };
+        if (player.guesses >= 3) {
+            // Player is out of the game
+            output.hand = player.hand;
+            if (this.players.every(p => p.guesses >= 3)) {
+                // Everyone is out
+                output.end = true;
+                this.phase = GAMEPHASE.END;
+            }
+        }
+        return output;
+    }
+
+    nextTurn() {
+        for (let i = 1; i < this.players.length; i++) {
+            const index = (this.turn + i) % this.NUM_PLAYERS;
+            if (this.players[index].guesses < 3) {
+                this.turn = index;
+                break;
+            }
+        }
     }
 
     // Creates a sanitized gamestate for the specified player
