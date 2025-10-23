@@ -125,18 +125,20 @@ socket.on('gameStart', (gameState) => {
         elem.appendChild(slot);
         div.appendChild(elem);
 
-        if (i == playerIndex) {
-            // Create hand
-            elem = document.createElement("p");
-            text = document.createTextNode("Hand: "); // And then create a list of no's
-            slot = document.createElement("span");
-            slot.classList.add("card-list");
-            slot.id = "hand";
-            // generateList(slot, p.hand, true);
-            elem.appendChild(text);
-            elem.appendChild(slot);
-            div.appendChild(elem);
-        }
+        // if (i == playerIndex) {
+        // Create hand
+        elem = document.createElement("p");
+        elem.id = "handp"+i;
+        if (i != playerIndex) elem.style.display = "none";
+        text = document.createTextNode("Hand: "); // And then create a list of no's
+        slot = document.createElement("span");
+        slot.classList.add("card-list");
+        slot.id = (i == playerIndex) ? "hand" : "hand"+i;
+        // generateList(slot, p.hand, true);
+        elem.appendChild(text);
+        elem.appendChild(slot);
+        div.appendChild(elem);
+        // }
 
         document.getElementById("players").appendChild(div);
     });
@@ -275,8 +277,11 @@ socket.on('guessMade', (data) => {
             // This should always be true
             if (data.guesses >= 3) {
                 const skull = document.getElementById("skull" + data.playerIndex);
-                console.log("skull");//
                 skull.textContent = "💀";
+                if (data.playerIndex !== playerIndex) {
+                    document.getElementById("handp"+data.playerIndex).style.display = "inline";
+                    generateList(document.getElementById("hand"+data.playerIndex), data.hand, false);
+                }
             } else {
                 console.warn("Player " + data.playerIndex + " were eliminated while having made <3 guesses");
             }
