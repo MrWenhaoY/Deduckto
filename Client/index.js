@@ -88,7 +88,10 @@ socket.on('gameStart', (gameState) => {
         div.className = (i === playerIndex) ? "self_player" : "player";
 
         let elem = document.createElement("p");
-        let text = document.createTextNode((i === playerIndex ? "You (Player " + i + ")" : "Player " + i) + " | Guesses: ");
+        let text = document.createElement("span");
+        text.id = "skull"+i;
+        elem.appendChild(text);
+        text = document.createTextNode((i === playerIndex ? "You (Player " + i + ")" : "Player " + i) + " | Guesses: ");
         let slot = document.createElement("span");
         slot.id = "guesses" + i;
         elem.appendChild(text);
@@ -268,6 +271,15 @@ socket.on('guessMade', (data) => {
                 document.getElementById("hostage").removeChild(document.getElementById("hostage"+data.hostage));
             // TODO: Implement loss on guess #3
             }
+        } else {
+            // This should always be true
+            if (data.guesses >= 3) {
+                const skull = document.getElementById("skull" + data.playerIndex);
+                console.log("skull");//
+                skull.textContent = "💀";
+            } else {
+                console.warn("Player " + data.playerIndex + " were eliminated while having made <3 guesses");
+            }
         }
         
     }
@@ -276,6 +288,7 @@ socket.on('guessMade', (data) => {
     // document.getElementById("guesses"+data.playerIndex).textContent = data.guesses;
     
     game.turn = data.newTurn;
+    if (data.end) game.phase = 2;
     // document.getElementById("turn").textContent = game.turn;
     loadGame();
 });
