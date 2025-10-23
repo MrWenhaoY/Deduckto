@@ -85,10 +85,10 @@ socket.on('gameStart', (gameState) => {
     game.players.forEach((p, i) => {
         const div = document.createElement("div");
         div.id = "player" + i;
-        div.className = "player"
+        div.className = (i === playerIndex) ? "self_player" : "player";
 
         let elem = document.createElement("p");
-        let text = document.createTextNode("Player: " + i + " | Guesses: ");
+        let text = document.createTextNode("Player " + i + " | Guesses: ");
         let slot = document.createElement("span");
         slot.id = "guesses" + i;
         elem.appendChild(text);
@@ -243,7 +243,8 @@ socket.on('cardPlayed', (data) => {
 });
 
 socket.on('guessMade', (data) => {
-    console.log("Player " + data.playerIndex + " made guess '" + data.guess + "' and " + (data.win ? "won" : "failed"));
+    console.log("Received 'guessMade'");
+    console.log(data);
     const player = game.players[data.playerIndex];
     if (data.win) {
         // TODO: Resolve a win

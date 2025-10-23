@@ -40,6 +40,9 @@ canvas {
 .player {
     border: 1px solid black;
 }
+.self_player {
+    border: 2px solid rgb(61, 255, 71);
+}
 
 /* #players {
     display: flex;
