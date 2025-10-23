@@ -88,7 +88,7 @@ socket.on('gameStart', (gameState) => {
         div.className = (i === playerIndex) ? "self_player" : "player";
 
         let elem = document.createElement("p");
-        let text = document.createTextNode("Player " + i + " | Guesses: ");
+        let text = document.createTextNode((i === playerIndex ? "You (Player " + i + ")" : "Player " + i) + " | Guesses: ");
         let slot = document.createElement("span");
         slot.id = "guesses" + i;
         elem.appendChild(text);
