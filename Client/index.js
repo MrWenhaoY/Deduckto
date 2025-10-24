@@ -252,11 +252,11 @@ socket.on('guessMade', (data) => {
     console.log(data);
     const player = game.players[data.playerIndex];
     if (data.win) {
-        // TODO: Resolve a win
         const skull = document.getElementById("skull" + data.playerIndex);
         skull.textContent = "⭐";
         console.log("Game over. Player " + data.playerIndex + " has won.")
         if (data.playerIndex === playerIndex) {
+            player.secret = data.guess;
             confetti({
                 origin: {y:-0.19},
                 particleCount: 1000,
