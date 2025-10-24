@@ -159,14 +159,15 @@ class Game {
         
         if (player.guesses >= 2) hostage = undefined;
 
+        player.guesses += 1;
+        
         const result = [0, 1, 2].every(i => player.secret[i] === guess[i]);
         if (result) {
             // Do game end
             this.phase = GAMEPHASE.END;
-            return {success: true, end: true, win: true, guess: guess, card: player.secret, playerIndex};
+            return {success: true, end: true, win: true, guess: guess, guesses: player.guesses, card: player.secret, playerIndex};
         }
         // Bad guess
-        player.guesses += 1;
         if (hostage !== undefined) player.unflipped = player.unflipped.filter(x => x != hostage);
         
         this.nextTurn();
