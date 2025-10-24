@@ -253,6 +253,8 @@ socket.on('guessMade', (data) => {
     const player = game.players[data.playerIndex];
     if (data.win) {
         // TODO: Resolve a win
+        const skull = document.getElementById("skull" + data.playerIndex);
+        skull.textContent = "⭐";
         console.log("Game over. Player " + data.playerIndex + " has won.")
         if (data.playerIndex === playerIndex) {
             confetti({
