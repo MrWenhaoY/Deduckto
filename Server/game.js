@@ -160,12 +160,20 @@ class Game {
         if (player.guesses >= 2) hostage = undefined;
 
         player.guesses += 1;
-        
+
         const result = [0, 1, 2].every(i => player.secret[i] === guess[i]);
         if (result) {
             // Do game end
             this.phase = GAMEPHASE.END;
-            return {success: true, end: true, win: true, guess: guess, guesses: player.guesses, card: player.secret, playerIndex};
+            return {
+                success: true, 
+                end: true, 
+                win: true, 
+                guess: guess, 
+                guesses: player.guesses, 
+                card: player.secret, 
+                playerIndex: playerIndex
+            };
         }
         // Bad guess
         if (hostage !== undefined) player.unflipped = player.unflipped.filter(x => x != hostage);
@@ -173,34 +181,49 @@ class Game {
         this.nextTurn();
         const output = {
             success: true, 
-            end: false,
+            // end: false,
             win: false, 
             guess: guess, 
             guesses: player.guesses, 
             playerIndex: playerIndex, 
-            newTurn: this.turn, 
+            // newTurn: this.turn, 
             hostage: hostage
         };
         if (player.guesses >= 3) {
             // Player is out of the game
             output.hand = player.hand;
-            if (this.players.every(p => p.guesses >= 3)) {
-                // Everyone is out
-                output.end = true;
-                this.phase = GAMEPHASE.END;
-            }
+            this.deactivate(playerSocket);
         }
+        output.end = this.phase == GAMEPHASE.END;
+        output.newTurn = this.turn;
         return output;
     }
 
     nextTurn() {
         for (let i = 1; i < this.players.length; i++) {
             const index = (this.turn + i) % this.NUM_PLAYERS;
-            if (this.players[index].guesses < 3) {
+            if (this.players[index].active) {
                 this.turn = index;
                 break;
             }
         }
+    }
+
+    // Player leaves game due to *external* factors
+    deactivate(playerSocket) {
+        const playerIndex = this.players.findIndex(p => p.name == playerSocket);
+        if (playerIndex < 0) return FAILURE;
+
+        const player = this.players[playerIndex];
+        player.active = false;
+        // End game if all players are inactive
+        if (this.players.every(p => !p.active)) {
+            this.phase = GAMEPHASE.END;
+        }
+        // Change turn if disabled player is current player
+        if (this.turn == playerIndex) this.nextTurn();
+
+        return {success: true, turn: this.turn, phase: this.phase};
     }
 
     // Creates a sanitized gamestate for the specified player
@@ -231,6 +254,7 @@ class Player {
         this.no = [];
         this.guesses = 0;
         this.unflipped = [0, 1]; // Piles unflipped. 0=no, 1=yes
+        this.active = true;
     }
 
     sanitized(name) {
