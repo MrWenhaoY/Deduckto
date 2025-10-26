@@ -1,6 +1,5 @@
-// Set default skin
 const socket = io();
-let skin = undefined;
+let theme = undefined;
 let game = undefined;
 let playerIndex = -1;
 
@@ -64,8 +63,8 @@ socket.on('gameStart', (gameState) => {
     game = gameState;
     playerIndex = game.playerIndex;
 
-    // Load skins
-    skin = new SkinLoader("maple", game.N);
+    // Load theme
+    theme = new ThemeLoader("maple", game.N);
 
     document.getElementById('start-menu').style.display = 'none';
     document.getElementsByClassName('waiting-room')[0].style.display = 'none';
@@ -77,7 +76,7 @@ socket.on('gameStart', (gameState) => {
         for (let j = 0; j < game.N; j++) {
             const option = document.createElement('option');
             option.value = j;
-            option.text = skin.getName(i, j);
+            option.text = theme.getName(i, j);
             guess.appendChild(option);
         }
     });
@@ -178,7 +177,7 @@ function generateList(slot, arr, playable) {
     slot.innerHTML = "";
     arr.forEach((card, i) => {
         const elem = document.createElement("span");
-        elem.innerHTML = skin.parse(card) + " ";
+        elem.innerHTML = theme.parse(card) + " ";
         if (playable) elem.setAttribute("onclick", "playCard("+i+")");
         slot.appendChild(elem);
     });

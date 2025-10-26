@@ -1,10 +1,10 @@
-class SkinLoader {
+class ThemeLoader {
     constructor(name, N) {
-        this.data = SKINS[name];
-        if (!this.data) throw new Error("Cannot load skin: " + name);
+        this.data = THEMES[name];
+        if (!this.data) throw new Error("Cannot load theme: " + name);
 
         if (N > this.data.max_size) {
-            throw new Error("# of variants (" + N + ") greater than maximum size of skin (" + this.data.max_size + ")");
+            throw new Error("# of variants (" + N + ") greater than maximum size of theme (" + this.data.max_size + ")");
         }
 
         const NULLCARD = [-1, -1, -1];

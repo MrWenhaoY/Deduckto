@@ -3,7 +3,7 @@ const GREEK = "αβγδεζηθικλμνξοπρσςτυφχψω";
 const COMMONGREEK = "αβεθλμπδτηω";
 const digits = "0123456789";
 
-const SKINS = {
+const THEMES = {
     tuple: {
         name: "tuple",
         type: "text",
