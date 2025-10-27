@@ -3,13 +3,16 @@ let theme = undefined;
 let game = undefined;
 let playerIndex = -1;
 
-socket.on('gameCreated', (lobby) => {
-    console.log("Lobby: ")
-    console.log(lobby);
-    document.getElementById('game-id').innerText = lobby.id;
-    document.getElementById('num-players').innerText = 1;
-    document.getElementById('num-players-2').innerText = 1;
-});
+// socket.on('gameCreated', (lobby) => {
+//     console.log("Lobby: ")
+//     console.log(lobby);
+//     document.getElementsByClassName('screen-lobby')[0].style.display='none';
+//     document.getElementsByClassName('waiting-room')[0].style.display='inline';
+//     document.getElementById('game-id').innerText = lobby.id;
+//     document.getElementById('game-id-2').innerText = lobby.id;
+//     document.getElementById('num-players').innerText = 1;
+//     document.getElementById('num-players-2').innerText = 1;
+// });
 
 socket.on('newJoin', (length) => {
     console.log('Received length: ' + length);
@@ -17,33 +20,10 @@ socket.on('newJoin', (length) => {
     document.getElementById('num-players-2').innerText = length;
 });
 
-// socket.on('updateScreen', (game) => {
-//     if (type === 'screen') {
-//         Object.values(game.players).forEach(p=> {
-//             players.forEach(x=> {
-//                 if (x.name === p.name) {
-//                     x.update(p);
-//                 }
-//             });
-//         });
-//         components = [];
-//         game.components.forEach(c=> {
-//             if (c.type == "popper") {
-//                 components.push(new Popper(c.x, c.y, c.width, c.height))
-//                 if (c.isDone) 
-//                     confetti({
-//                         particleCount: 600,
-//                         spread: 180
-//                     });
-//             }
-//         });
-//     }
-// });
-
 socket.on('joinedGame', (lobby) => {
-    type = 'player';
     // Show joined game display
-    document.getElementsByClassName('player-lobby')[0].style.display='none';
+    document.getElementsByClassName('join-screen')[0].style.display='none';
+    document.getElementsByClassName('screen-lobby')[0].style.display='none';
     document.getElementsByClassName('waiting-room')[0].style.display='inline';
     document.getElementById('game-id-2').innerText = lobby.id;
     document.getElementById('num-players-2').innerText = lobby.playerSockets.length;
@@ -298,7 +278,7 @@ socket.on('deactivate', (data) => {
 
 function showJoin() {
     document.getElementsByClassName('center-buttons')[0].style.display='none';
-    document.getElementsByClassName('player-lobby')[0].style.display='inline';
+    document.getElementsByClassName('join-screen')[0].style.display='inline';
 }
 
 function joinGame() {

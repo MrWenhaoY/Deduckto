@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
             lobby.addPlayer(socket.id);
             socket.join(lobby.id);
             l.sockets[socket.id] = lobby;
-            socket.emit('gameCreated', lobby);
+            socket.emit('joinedGame', lobby);
             console.log(socket.id + ' created game: ' + lobby.id);//
         }
     });
