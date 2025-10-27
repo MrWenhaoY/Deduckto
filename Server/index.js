@@ -47,16 +47,18 @@ io.on('connection', (socket) => {
 
     // Lobby Events
     socket.on('newGame', () => {
-        const lobby = new l.Lobby();
-        lobby.addPlayer(socket.id);
-        socket.join(lobby.id);
-        l.sockets[socket.id] = lobby;
-        socket.emit('gameCreated', lobby);
-        console.log(socket.id + ' created game: ' + lobby.id);//
+        if (l.sockets[socket.id] === undefined) {
+            const lobby = new l.Lobby();
+            lobby.addPlayer(socket.id);
+            socket.join(lobby.id);
+            l.sockets[socket.id] = lobby;
+            socket.emit('gameCreated', lobby);
+            console.log(socket.id + ' created game: ' + lobby.id);//
+        }
     });
 
     socket.on('joinGame', (code)=> {
-        if (!code) return;
+        if (!code || l.sockets[socket.id] !== undefined) return;
 
         const lobby = l.lobbies[code.toUpperCase().trim()];
         if (lobby !== undefined && lobby.addPlayer(socket.id)) {
