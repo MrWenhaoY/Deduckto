@@ -186,12 +186,14 @@ class Game {
             guess: guess, 
             guesses: player.guesses, 
             playerIndex: playerIndex, 
+            deactivate: false,
             // newTurn: this.turn, 
             hostage: hostage
         };
         if (player.guesses >= 3) {
             // Player is out of the game
             output.hand = player.hand;
+            output.deactivate = true;
             this.deactivate(playerSocket);
         }
         output.end = this.phase == GAMEPHASE.END;
@@ -223,7 +225,7 @@ class Game {
         // Change turn if disabled player is current player
         if (this.turn == playerIndex) this.nextTurn();
 
-        return {success: true, turn: this.turn, phase: this.phase};
+        return {success: true, playerIndex: playerIndex, turn: this.turn, phase: this.phase};
     }
 
     // Creates a sanitized gamestate for the specified player

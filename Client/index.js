@@ -88,7 +88,7 @@ socket.on('gameStart', (gameState) => {
 
         let elem = document.createElement("p");
         let text = document.createElement("span");
-        text.id = "skull"+i;
+        text.id = "icon"+i;
         elem.appendChild(text);
         text = document.createTextNode((i === playerIndex ? "You (Player " + i + ")" : "Player " + i) + " | Guesses: ");
         let slot = document.createElement("span");
@@ -251,8 +251,7 @@ socket.on('guessMade', (data) => {
     console.log(data);
     const player = game.players[data.playerIndex];
     if (data.win) {
-        const skull = document.getElementById("skull" + data.playerIndex);
-        skull.textContent = "⭐";
+        document.getElementById("icon" + data.playerIndex).textContent = "⭐";
         console.log("Game over. Player " + data.playerIndex + " has won.")
         if (data.playerIndex === playerIndex) {
             player.secret = data.guess;
@@ -272,30 +271,27 @@ socket.on('guessMade', (data) => {
             if (data.playerIndex == game.playerIndex) {
                 console.log(data.hostage)
                 document.getElementById("hostage").removeChild(document.getElementById("hostage"+data.hostage));
-            // TODO: Implement loss on guess #3
-            }
-        } else {
-            // This should always be true
-            if (data.guesses >= 3) {
-                const skull = document.getElementById("skull" + data.playerIndex);
-                skull.textContent = "💀";
-                if (data.playerIndex !== playerIndex) {
-                    document.getElementById("handp"+data.playerIndex).style.display = "inline";
-                    generateList(document.getElementById("hand"+data.playerIndex), data.hand, false);
-                }
-            } else {
-                console.warn("Player " + data.playerIndex + " were eliminated while having made <3 guesses");
             }
         }
-        
     }
     console.log("Player " + data.playerIndex + " has guessed " + data.guesses + " times.")
     player.guesses = data.guesses;
-    // document.getElementById("guesses"+data.playerIndex).textContent = data.guesses;
     
     game.turn = data.newTurn;
     if (data.end) game.phase = 2;
-    // document.getElementById("turn").textContent = game.turn;
+    loadGame();
+});
+
+socket.on('deactivate', (data) => {
+    console.log("Recieved deactivate");
+    console.log(data);
+    game.players[data.playerIndex].active = false;
+    game.turn = data.turn;
+    document.getElementById("icon" + data.playerIndex).textContent = data.reason == "guess" ? "💀" : "🔌";
+    if (data.playerIndex !== playerIndex) {
+        document.getElementById("handp"+data.playerIndex).style.display = "inline";
+        generateList(document.getElementById("hand"+data.playerIndex), data.hand, false);
+    }
     loadGame();
 });
 

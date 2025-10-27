@@ -128,6 +128,15 @@ io.on('connection', (socket) => {
             if (result.success) {
                 console.log(socket.id + " made guess " + guess + " with pile " + hostage);
                 io.to(lobby.id).emit("guessMade", result);
+                if (result.deactivate) {
+                    io.to(lobby.id).emit("deactivate", {
+                        playerIndex: result.playerIndex, 
+                        turn: result.newTurn, 
+                        phase: game.phase, 
+                        hand: result.hand,
+                        reason: "guess"
+                    });
+                }
                 // TODO: Implement game loss for bad guess
                 // TODO: Implement game win / game end
             } else {
