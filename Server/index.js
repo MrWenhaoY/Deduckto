@@ -95,9 +95,8 @@ io.on('connection', (socket) => {
                     console.log(socket.id + " played card " + result.card + " at index " + cardId);
                     socket.emit("cardPlayed", result);
                     delete result.cardDrawn;
-                    lobby.playerSockets.forEach(p => {
-                        if (p !== socket.id) sockets.get(p)?.emit('cardPlayed', result);
-                    });
+                    // To everyone else
+                    socket.to(lobby.id).emit('cardPlayed', result);
                 } else {
                     console.log(socket.id + " failed to play: " + cardId);
                 }
@@ -139,31 +138,12 @@ io.on('connection', (socket) => {
                         reason: "guess"
                     });
                 }
-                // TODO: Implement game loss for bad guess
                 // TODO: Implement game win / game end
             } else {
                 console.log(socket.id + " failed to guess: " + guess + " with hostage " + hostage);
             }
         }
     });
-
-
-// setInterval(()=> {
-//     Object.values(g.players).forEach(p=> {
-//         const lobby = l.sockets[p.name];
-//         if (lobby !== undefined && lobby.game !== undefined) { // This should not happen in 2 player games
-//             p.update(lobby.game);
-//         }
-        
-//     });
-
-//     Object.values(l.lobbies).forEach(x=>{
-//         if (x.game) {
-//             io.to(x.id).emit('updateScreen', x.game)
-//             x.game.update();
-//         }
-//     });
-
 }, 20);
 
 //server stuff
