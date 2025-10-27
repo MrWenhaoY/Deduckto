@@ -26,6 +26,7 @@ io.on('connection', (socket) => {
         if (lobby) {
             l.sockets[socket.id] = undefined;
             lobby.removePlayer(socket.id);
+            socket.leave(lobby.id);
             if (lobby.playerSockets.length == 0) {
                 // Delete lobby if empty
                 delete l.lobbies.game;
@@ -33,7 +34,17 @@ io.on('connection', (socket) => {
                 console.log("Closed lobby " + lobby.id);
                 console.log("Current number of lobbies: " + Object.keys(l.lobbies).length);
             } else {
-                io.to(lobby.id).emit("newDisconnect", lobby.playerSockets.length);
+                const game = lobby.game;
+                if (game) {
+                    const result = game.deactivate(socket.id);
+                    if (result.success) {
+                        // Player was active, notify others that player has left
+                        result.reason = "disconnect";
+                        io.to(lobby.id).emit("deactivate", result);
+                    }
+                } else {
+                    io.to(lobby.id).emit("newDisconnect", lobby.playerSockets.length);
+                }
             }
         }
         // Otherwise, nothing to do

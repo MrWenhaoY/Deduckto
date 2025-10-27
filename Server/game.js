@@ -217,6 +217,8 @@ class Game {
         if (playerIndex < 0) return FAILURE;
 
         const player = this.players[playerIndex];
+        if (!player.active) return FAILURE;
+        
         player.active = false;
         // End game if all players are inactive
         if (this.players.every(p => !p.active)) {
@@ -225,7 +227,7 @@ class Game {
         // Change turn if disabled player is current player
         if (this.turn == playerIndex) this.nextTurn();
 
-        return {success: true, playerIndex: playerIndex, turn: this.turn, phase: this.phase};
+        return {success: true, playerIndex: playerIndex, turn: this.turn, phase: this.phase, hand: player.hand};
     }
 
     // Creates a sanitized gamestate for the specified player

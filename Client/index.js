@@ -29,13 +29,13 @@ socket.on('joinedGame', (lobby) => {
     document.getElementById('num-players-2').innerText = lobby.playerSockets.length;
 });
 
-socket.on('lobby-closed', (lobbyId) => {
-    socket.emit('leave', lobbyId);
-    document.getElementById('game').style.display = 'none';
-    document.getElementsByClassName('waiting-room')[0].style.display='none';
-    document.getElementsByClassName('center-buttons')[0].style.display='inline';
-    alert('Host has left the lobby.');
-});
+// socket.on('lobby-closed', (lobbyId) => {
+//     socket.emit('leave', lobbyId);
+//     document.getElementById('game').style.display = 'none';
+//     document.getElementsByClassName('waiting-room')[0].style.display='none';
+//     document.getElementsByClassName('center-buttons')[0].style.display='inline';
+//     alert('Host has left the lobby.');
+// });
 
 socket.on('gameStart', (gameState) => {
     console.log("Recieved gameState: ");
@@ -311,42 +311,3 @@ function makeGuess() {
         socket.emit("guess", [guess, parseInt(document.getElementById("hostage").value)]);
     }
 }
-
-// //graphics
-// let canvas = document.getElementById('canvas');
-// // H: 1075, W: 1920
-// // Width of player is about 50 Width, around 150 Height?
-// // Lets try W:H to be 2:1 and playerWidth to be 1/20 of the width
-// // Currently, we are just using full screen, which means that relative height might vary between computers
-// let h = window.innerHeight;
-// let w = window.innerWidth;
-// ratio = w/2000;
-// canvas.height = h;
-// canvas.width = w;
-// let ctx = canvas.getContext('2d');
-// ctx.scale(ratio, ratio);
-// ctx.lineWidth = 2;
-
-// setInterval(() => {
-//     ctx.fillStyle = 'rgb(200,200,200)';
-//     ctx.fillRect(0,0,window.innerWidth/ratio,window.innerHeight/ratio);
-
-//     // Spawn ground while there exists at least one player
-//     if (players.length > 0) {
-//         let cWidth = ctx.width;
-//         ctx.width *= 1.5
-//         ctx.beginPath();
-//         ctx.moveTo(0, h/ratio - 190);
-//         ctx.lineTo(2000, h/ratio - 190);
-//         ctx.stroke();
-//         ctx.width = cWidth;
-//     }
-
-//     players.forEach(p =>{
-//         p.updateVerticies();
-//         p.draw(ctx);
-//     })
-//     components.forEach(c => {
-//         c.draw(ctx);
-//     });
-// },20)
