@@ -37,6 +37,10 @@ class Lobby {
 
         return false;
     }
+
+    removePlayer(id) {
+        this.playerSockets = this.playerSockets.filter(s => s !== id);
+    }
 }
 
 module.exports = {lobbies, sockets, Lobby}

@@ -19,26 +19,25 @@ io.on('connection', (socket) => {
     socket.emit('message','You are connected!'); // send a msg to client
     console.log('new connection: ' + socket.id); //
 
-    // // Handle Disconnect
-    // socket.on('disconnect', ()=> {
-    //     console.log(socket.id + " disconnected.");
-    //     const lobby = l.sockets[socket.id];
-    //     if (lobby) {
-    //         l.sockets[socket.id] = undefined;
-    //         // If server owner, close the lobby
-    //         if(socket.id === lobby.screenSocket) {
-    //             // Delete lobby, send signal to players, remove them from the room
-    //             io.to(lobby.id).emit("lobby-closed", lobby.id); // Host has left the lobby, players should leave the room
-    //             delete l.lobbies.game;
-    //             delete l.lobbies[lobby.id];
-    //             delete lobby; // Hopefully this won't cause problems
-    //         } else {
-    //             lobby.playerSockets = lobby.playerSockets.filter(x=>x!==socket.id);
-    //             io.to(lobby.id).emit("newDisconnect", lobby.playerSockets.length);
-    //         }
-    //     }
-    //     // Otherwise, nothing to do
-    // });
+    // Handle Disconnect
+    socket.on('disconnect', ()=> {
+        console.log(socket.id + " disconnected.");
+        const lobby = l.sockets[socket.id];
+        if (lobby) {
+            l.sockets[socket.id] = undefined;
+            lobby.removePlayer(socket.id);
+            if (lobby.playerSockets.length == 0) {
+                // Delete lobby if empty
+                delete l.lobbies.game;
+                delete l.lobbies[lobby.id];
+                console.log("Closed lobby " + lobby.id);
+                console.log("Current number of lobbies: " + Object.keys(l.lobbies).length);
+            } else {
+                io.to(lobby.id).emit("newDisconnect", lobby.playerSockets.length);
+            }
+        }
+        // Otherwise, nothing to do
+    });
     
     // socket.on('leave', (room)=> {
     //     console.log(socket.id + " has left room " + room);//
