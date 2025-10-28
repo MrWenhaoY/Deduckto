@@ -41,6 +41,20 @@ io.on('connection', (socket) => {
                         // Player was active, notify others that player has left
                         result.reason = "disconnect";
                         io.to(lobby.id).emit("deactivate", result);
+
+                        if (game.phase === g.GAMEPHASE.SETUP) {
+                            // Attempt to play cards as necessary
+                            let result;
+                            for (let i = 0; i < 5; i++) {
+                                result = game.setup_play(socket.id, i);
+                                if (result.success) break;
+                            }
+                            if (result.success === true && result.phase === g.GAMEPHASE.PLAY) {
+                                lobby.playerSockets.forEach(p => {
+                                    sockets.get(p)?.emit('beginPlay', game.sanitized(p));
+                                });
+                            }
+                        }
                     }
                 } else {
                     io.to(lobby.id).emit("newDisconnect", lobby.playerSockets.length);
