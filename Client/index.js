@@ -85,6 +85,10 @@ socket.on('gameStart', (gameState) => {
         elem.appendChild(text);
         elem.appendChild(slot);
         div.appendChild(elem);
+
+        const openPiles = document.createElement("div");
+        openPiles.className = "open-piles";
+        div.appendChild(openPiles);
         
         elem = document.createElement("p");
         text = document.createTextNode("Yes: "); // And then create a list of no's
@@ -93,7 +97,7 @@ socket.on('gameStart', (gameState) => {
         slot.id = "yes" + i;
         elem.appendChild(text);
         elem.appendChild(slot);
-        div.appendChild(elem);
+        openPiles.appendChild(elem);
 
         elem = document.createElement("p");
         text = document.createTextNode("No: "); // And then create a list of no's
@@ -102,7 +106,7 @@ socket.on('gameStart', (gameState) => {
         slot.id = "no" + i;
         elem.appendChild(text);
         elem.appendChild(slot);
-        div.appendChild(elem);
+        openPiles.appendChild(elem);
 
         // if (i == playerIndex) {
         // Create hand

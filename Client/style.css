@@ -212,3 +212,17 @@ padding: 8px;
     align-items: center; /* Vertical centering */
     width: 100%;
 }
+
+.open-piles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    p {
+        border: 1px solid red;
+        margin: 0 auto;
+    }   
+}
+
+.stats {
+    display: inline;
+    padding-right: 15px;
+}
