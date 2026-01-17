@@ -120,6 +120,7 @@ class Game {
         return {success: true, phase: this.phase, card: card};
     }
 
+    // Attempt to have the player play a card, by index in their hand 
     play(playerSocket, cardIndex) {
         const playerIndex = this.players.findIndex(p => p.name == playerSocket);
         if (this.turn !== playerIndex || this.phase !== GAMEPHASE.PLAY) return FAILURE;
@@ -150,14 +151,14 @@ class Game {
         };
     }
 
-    guess(playerSocket, guess, hostage) {
+    guess(playerSocket, guess) {
         const playerIndex = this.players.findIndex(p => p.name == playerSocket);
         const player = this.players[playerIndex];
         if (this.phase !== GAMEPHASE.PLAY || this.turn !== playerIndex) return FAILURE;
         if (!player || !isValidCard(guess, this.N)) return FAILURE;
-        if (player.unflipped.length > 0 && !(player.unflipped.findIndex(x => x === hostage) >= 0)) return FAILURE;
+        // if (player.unflipped.length > 0 && !(player.unflipped.findIndex(x => x === hostage) >= 0)) return FAILURE;
         
-        if (player.guesses >= 2) hostage = undefined;
+        // if (player.guesses >= 2) hostage = undefined;
 
         player.guesses += 1;
 
@@ -176,7 +177,7 @@ class Game {
             };
         }
         // Bad guess
-        if (hostage !== undefined) player.unflipped = player.unflipped.filter(x => x != hostage);
+        // if (hostage !== undefined) player.unflipped = player.unflipped.filter(x => x != hostage);
         
         this.nextTurn();
         const output = {
@@ -186,9 +187,9 @@ class Game {
             guess: guess, 
             guesses: player.guesses, 
             playerIndex: playerIndex, 
-            deactivate: false,
+            deactivate: false
             // newTurn: this.turn, 
-            hostage: hostage
+            // hostage: hostage
         };
         if (player.guesses >= 3) {
             // Player is out of the game
@@ -201,6 +202,7 @@ class Game {
         return output;
     }
 
+    // Changes turn to next active player
     nextTurn() {
         for (let i = 1; i < this.players.length; i++) {
             const index = (this.turn + i) % this.NUM_PLAYERS;
@@ -261,6 +263,8 @@ class Player {
         this.active = true;
     }
 
+    // Creates a sanitized version of self's player state for the argument player
+    // Hides secret for self, and hand for others
     sanitized(name) {
         const playerState = {
             secret: this.secret,

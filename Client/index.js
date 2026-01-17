@@ -3,6 +3,8 @@ let theme = undefined;
 let game = undefined;
 let playerIndex = -1;
 
+const STARTING_LIVES = 3;
+
 // socket.on('gameCreated', (lobby) => {
 //     console.log("Lobby: ")
 //     console.log(lobby);
@@ -70,10 +72,11 @@ socket.on('gameStart', (gameState) => {
         let text = document.createElement("span");
         text.id = "icon"+i;
         elem.appendChild(text);
-        text = document.createTextNode((i === playerIndex ? "You (Player " + i + ")" : "Player " + i) + " | Guesses: ");
-        let slot = document.createElement("span");
-        slot.id = "guesses" + i;
+        
+        text = document.createTextNode((i === playerIndex ? "You (Player " + i + ")" : "Player " + i) + " ");
         elem.appendChild(text);
+        let slot = document.createElement("span");
+        slot.id = "lives" + i;
         elem.appendChild(slot);
         div.appendChild(elem);
 
@@ -142,8 +145,8 @@ function loadGame() {
         // } else {
         //     generateList(elem, [p.secret], false);
         // }
-        elem = document.getElementById("guesses"+i);
-        elem.innerText = p.guesses;
+        elem = document.getElementById("lives"+i);
+        elem.innerText = "❤️".repeat(STARTING_LIVES - p.guesses);
 
         elem = document.getElementById("yes"+i);
         generateList(elem, p.yes, false);
@@ -248,18 +251,18 @@ socket.on('guessMade', (data) => {
                 ticks: 170,
             });
         }
-    } else {
-        // Guess failed
-        if (data.hostage !== undefined) {
-            player[data.hostage ? "yes" : "no"].fill(null);
-            if (data.playerIndex == game.playerIndex) {
-                console.log(data.hostage)
-                document.getElementById("hostage").removeChild(document.getElementById("hostage"+data.hostage));
-            }
-        }
-    }
+    } //else {
+    //     // Guess failed
+    //     if (data.hostage !== undefined) {
+    //         player[data.hostage ? "yes" : "no"].fill(null);
+    //         if (data.playerIndex == game.playerIndex) {
+    //             console.log(data.hostage)
+    //             document.getElementById("hostage").removeChild(document.getElementById("hostage"+data.hostage));
+    //         }
+    //     }
+    // }
     console.log("Player " + data.playerIndex + " has guessed " + data.guesses + " times.")
-    player.guesses = data.guesses;
+    if (!data.win) player.guesses = data.guesses; // Don't deduct lives if player has already won
     
     game.turn = data.newTurn;
     if (data.end) game.phase = 2;
@@ -312,6 +315,6 @@ function playCard(index) {
 function makeGuess() {
     if (game.phase === 1 && game.turn === playerIndex) {
         const guess = [0, 1, 2].map(i => parseInt(document.getElementById('guess'+i).value));
-        socket.emit("guess", [guess, parseInt(document.getElementById("hostage").value)]);
+        socket.emit("guess", guess);
     }
 }

@@ -143,15 +143,13 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('guess', (data) => {
+    socket.on('guess', (guess) => {
         const lobby = l.sockets[socket.id];
         let game;
-        if (lobby !== undefined && (game = lobby.game) && Array.isArray(data)) {
-            const guess = data[0];
-            const hostage = data[1];
-            const result = game.guess(socket.id, guess, hostage);
+        if (lobby !== undefined && (game = lobby.game)) {
+            const result = game.guess(socket.id, guess);
             if (result.success) {
-                console.log(socket.id + " made guess " + guess + " with pile " + hostage);
+                console.log(socket.id + " made guess " + guess);
                 io.to(lobby.id).emit("guessMade", result);
                 if (result.deactivate) {
                     io.to(lobby.id).emit("deactivate", {
@@ -164,7 +162,7 @@ io.on('connection', (socket) => {
                 }
                 // TODO: Implement game win / game end
             } else {
-                console.log(socket.id + " failed to guess: " + guess + " with hostage " + hostage);
+                console.log(socket.id + " failed to guess: " + guess);
             }
         }
     });
