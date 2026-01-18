@@ -13,6 +13,7 @@ class ThemeLoader {
             this.parse = (card) => {
                 return (card === null) ? this.data.null() : this.data.parse(card);
             }
+            this.getText = this.parse;
         } else if (this.data.type === "image") {
             this.parse = (card) => {
                 if (card === null) card = NULLCARD;
@@ -25,6 +26,7 @@ class ThemeLoader {
                 html += "</div>";
                 return html;
             }
+            this.getText = this.data.toText;
         }
     }
     getName(catIndex, val) {
