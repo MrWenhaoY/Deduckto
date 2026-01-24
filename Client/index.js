@@ -61,6 +61,7 @@ socket.on('gameStart', (gameState) => {
             option.text = theme.getName(i, j);
             guess.appendChild(option);
         }
+        guess.addEventListener("change", showPreview);
     });
     
     game.players.forEach((p, i) => {
@@ -158,6 +159,14 @@ function loadGame() {
             generateList(elem, p.hand, true);
         }
     });
+
+    showPreview();
+}
+
+function showPreview() {
+    const guess = [0, 1, 2].map(i => parseInt(document.getElementById('guess'+i).value));
+    const elem = document.getElementById("guessPreview");
+    elem.innerHTML = theme.parse(guess);
 }
 
 function generateList(slot, arr, playable) {
