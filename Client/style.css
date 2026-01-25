@@ -37,6 +37,19 @@ canvas {
     height: 100px;
 }
 
+.log-container {
+    overflow-y: auto;
+    border: 1px solid gray;
+    width: 300px;
+    height: 200px;
+}
+
+.log-message {
+    padding: 4px 5px;
+    background: #f5f5f5;
+    border: 1px solid gray;
+}
+
 .player {
     border: 1px solid black;
 }

@@ -179,6 +179,17 @@ function generateList(slot, arr, playable) {
     });
 }
 
+function addLog(text) {
+    const logs = document.getElementById("log");
+    const log = document.createElement("div");
+    log.className = "log-message";
+    log.textContent = text;
+    logs.appendChild(log);
+
+    // Scroll to bottom
+    logs.scrollTop = logs.scrollHeight;
+}
+
 // Returns the number of coordinates in which the cards match 
 function match(c1, c2) {
     let sum = 0;
@@ -211,9 +222,10 @@ socket.on("beginPlay", (gameState) => {
 });
 
 socket.on('cardPlayed', (data) => {
-    console.log("Received 'cardPlayed'");
-    console.log(data);
-    //console.log("Player " + data.playerIndex + " played to pile '" + (data.pile ? "Yes" : "No") + "' card: " + data.card);
+    // console.log("Received 'cardPlayed'");
+    // console.log(data);
+    addLog(`${data.pile ? "✅":"❌"} Player ${data.playerIndex} played ${theme.getText(data.card)} to the '${data.pile ? "Yes" : "No"}' pile.`)
+    // addLog(`Player ${data.playerIndex} played ${theme.getText(data.card)} to pile '${data.pile ? "Yes✅" : "No❌"}'.`)
 
     const player = game.players[data.playerIndex];
     if (data.playerIndex == game.playerIndex) {
@@ -246,7 +258,8 @@ socket.on('guessMade', (data) => {
     console.log("Received 'guessMade'");
     console.log(data);
     const player = game.players[data.playerIndex];
-    if (data.win) {
+    if (data.win) { 
+        addLog(`🏆 Player ${data.playerIndex} has correctly guessed ${theme.getText(data.guess)} and won!`);
         document.getElementById("icon" + data.playerIndex).textContent = "⭐";
         console.log("Game over. Player " + data.playerIndex + " has won.")
         if (data.playerIndex === playerIndex) {
@@ -260,16 +273,9 @@ socket.on('guessMade', (data) => {
                 ticks: 170,
             });
         }
-    } //else {
-    //     // Guess failed
-    //     if (data.hostage !== undefined) {
-    //         player[data.hostage ? "yes" : "no"].fill(null);
-    //         if (data.playerIndex == game.playerIndex) {
-    //             console.log(data.hostage)
-    //             document.getElementById("hostage").removeChild(document.getElementById("hostage"+data.hostage));
-    //         }
-    //     }
-    // }
+    } else {
+        addLog(`💔 Player ${data.playerIndex} has incorrectly guessed ${theme.getText(data.guess)} and lost a life!`)
+    }
     console.log("Player " + data.playerIndex + " has guessed " + data.guesses + " times.")
     if (!data.win) player.guesses = data.guesses; // Don't deduct lives if player has already won
     
@@ -283,7 +289,11 @@ socket.on('deactivate', (data) => {
     console.log(data);
     game.players[data.playerIndex].active = false;
     game.turn = data.turn;
+
     document.getElementById("icon" + data.playerIndex).textContent = data.reason == "guess" ? "💀" : "🔌";
+    if (data.reason == "guess") addLog(`💀 Player ${data.playerIndex} is out.`);
+    else addLog(`🔌 Player ${data.playerIndex} has left the game.`);
+
     if (data.playerIndex !== playerIndex) {
         document.getElementById("handp"+data.playerIndex).style.display = "inline";
         generateList(document.getElementById("hand"+data.playerIndex), data.hand, false);
