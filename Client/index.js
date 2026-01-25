@@ -5,6 +5,8 @@ let playerIndex = -1;
 
 const STARTING_LIVES = 3;
 
+const SCROLL_THRESHOLD = 10; // Pixels
+
 // socket.on('gameCreated', (lobby) => {
 //     console.log("Lobby: ")
 //     console.log(lobby);
@@ -181,13 +183,15 @@ function generateList(slot, arr, playable) {
 
 function addLog(text) {
     const logs = document.getElementById("log");
+    const autoScroll = logs.scrollHeight - logs.scrollTop - logs.clientHeight <= SCROLL_THRESHOLD;
+    // console.log(logs.scrollHeight - logs.scrollTop);//
     const log = document.createElement("div");
     log.className = "log-message";
     log.textContent = text;
     logs.appendChild(log);
 
     // Scroll to bottom
-    logs.scrollTop = logs.scrollHeight;
+    if (autoScroll) logs.scrollTop = logs.scrollHeight;
 }
 
 // Returns the number of coordinates in which the cards match 
