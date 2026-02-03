@@ -19,20 +19,6 @@
     <div class="home">
         <div id="start-menu" class="reset-home">
             <div class="center-buttons elementToFadeIn">
-                <!-- <div class="object-container elementToFadeIn">
-                    <div class="object1">
-                        <div class="object-rope"></div>
-                        <div class="object-shape"></div>
-                    </div>
-                    <div class="object2">
-                        <div class="object-rope"></div>
-                        <div class="object-shape"></div>
-                    </div>
-                    <div class="object3">
-                        <div class="object-rope"></div>
-                        <div class="object-shape"></div>
-                    </div>
-                </div> -->
                 <h1>Deduckto</h1>
                 <button class="home-button" onclick="newGame()">Create New Game</button>
                 <button class="home-button" onclick="showJoin()">Join Existing Game</button>
@@ -59,22 +45,32 @@
             </div>
         </div>
         <div id="game" class="noselect" style="display:none;">
-            <div style="margin-bottom: 10px;">
-            <p class="stats">Game Phase: <span id="phase"></span></p>
-            <p class="stats">Active Player: <span id="turn"></span></p>
-            <p class="stats">Deck Size: <span id="deck-size"></span></p>
+            <div id="stats-panel" class="panel">
+                <div style="display:none">Game Phase: <span id="phase"></span></div>
+                <div>Player <span id="self-name"></span></div>
+                <div>Player <span id="turn"></span>'s Turn</div>
+                <div>Deck Size: <span id="deck-size"></span></div>
             </div>
-
-            <select id="guess0"></select>
-            <select id="guess1"></select>
-            <select id="guess2"></select>
-            <button onclick="makeGuess()">Guess</button>
-            
-            <span id="guessPreview"></span>
-
-            <div id="log" class="log-container">
+            <!-- <div id="main-stats">
+                <p class="stats" style="display:none">Game Phase: <span id="phase"></span></p><br>
+                <p class="stats">Player <span id="self-name"></span></p><br>
+                <p class="stats">Player <span id="turn"></span>'s Turn</p><br>
+                <p class="stats">Deck Size: <span id="deck-size"></span></p>
+            </div> -->
+            <div id="play-area" class="panel">
+                <p>Hand: <span id="hand" class="card-list"></span></p>
+                <div id="guess-container" class="object-container">
+                    <select id="guess0"></select>
+                    <select id="guess1"></select>
+                    <select id="guess2"></select>
+                    <button onclick="makeGuess()">Guess</button>
+                    <span id="guessPreview" style="display:inline;"></span>
+                </div>
             </div>
-
+            <div id="log" class="panel log-container"></div>
+            <div id="self-area">
+                
+            </div>
             <div id="players"> <!--class="object-container"-->
 
             </div>

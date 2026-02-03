@@ -26,7 +26,7 @@ class ThemeLoader {
                 html += "</div>";
                 return html;
             }
-            this.getText = (card) => this.data.toText(card); // Due to how 'this' works, the closure is necessary
+            this.getText = (card) => this.data.toText(card); // Due to how the keyword 'this' works, the closure is necessary
         }
     }
     getName(catIndex, val) {

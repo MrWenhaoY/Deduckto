@@ -46,6 +46,7 @@ socket.on('gameStart', (gameState) => {
     console.log(gameState);
     game = gameState;
     playerIndex = game.playerIndex;
+    document.getElementById('self-name').innerText = playerIndex;
 
     // Load theme
     theme = new ThemeLoader("maple", game.N);
@@ -114,22 +115,24 @@ socket.on('gameStart', (gameState) => {
         elem.appendChild(slot);
         openPiles.appendChild(elem);
 
-        // if (i == playerIndex) {
-        // Create hand
+        if (i === playerIndex) {
+            document.getElementById("self-area").appendChild(div);
+        } else {
+            document.getElementById("players").appendChild(div);
+        }
+
         elem = document.createElement("p");
         elem.id = "handp"+i;
         if (i != playerIndex) elem.style.display = "none";
-        text = document.createTextNode("Hand: "); // And then create a list of no's
+        text = document.createTextNode("Hand: ");
         slot = document.createElement("span");
         slot.classList.add("card-list");
         slot.id = (i == playerIndex) ? "hand" : "hand"+i;
-        // generateList(slot, p.hand, true);
         elem.appendChild(text);
         elem.appendChild(slot);
         div.appendChild(elem);
-        // }
 
-        document.getElementById("players").appendChild(div);
+        
     });
 
     loadGame();
