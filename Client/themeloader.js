@@ -19,9 +19,9 @@ class ThemeLoader {
                 if (card === null) card = NULLCARD;
                 let html = "<div class='card noselect'>";
                 [0, 1, 2].forEach(i => {
-                    html += "<img class='card-img' src='Assets/";
+                    html += "<img src='Assets/";
                     html += this.data["cat"+i+"_root"] + this.data["cat"+i+"_parse"](card[i]) + "' ";
-                    html += "alt='" + this.data["cat"+i+"_names"][card[i]] + "' />"
+                    html += "class='layer" + i + "' alt='" + this.data["cat"+i+"_names"][card[i]] + "' />"
                 })
                 html += "</div>";
                 return html;

@@ -4,8 +4,11 @@ let game = undefined;
 let playerIndex = -1;
 
 const STARTING_LIVES = 3;
-
 const SCROLL_THRESHOLD = 10; // Pixels
+
+function getElementByUniqueClass(className) {
+    return document.getElementsByClassName(className)[0];
+}
 
 // socket.on('gameCreated', (lobby) => {
 //     console.log("Lobby: ")
@@ -47,13 +50,20 @@ socket.on('gameStart', (gameState) => {
     game = gameState;
     playerIndex = game.playerIndex;
     document.getElementById('self-name').innerText = playerIndex;
+    document.getElementById("pIndex").innerText = playerIndex;
+    document.getElementById("self-yes").classList.add("yes"+playerIndex);
+    document.getElementById("self-no").classList.add("no"+playerIndex);
+    document.getElementById("self_icon").classList.add("icon"+playerIndex);
+    document.getElementById("secret").classList.add("secret"+playerIndex);
+    document.getElementById("lives").classList.add("lives"+playerIndex);
+    document.getElementById("hand").classList.add("hand"+playerIndex);
 
     // Load theme
     theme = new ThemeLoader("maple", game.N);
 
     document.getElementById('start-menu').style.display = 'none';
     document.getElementsByClassName('waiting-room')[0].style.display = 'none';
-    document.getElementById('game').style.display = 'inline';
+    document.getElementById('game-container').style.display = 'grid';
     
     // Set up guess
     [0, 1, 2].forEach(i => {
@@ -66,71 +76,48 @@ socket.on('gameStart', (gameState) => {
         }
         guess.addEventListener("change", showPreview);
     });
-    
-    game.players.forEach((p, i) => {
-        const div = document.createElement("div");
-        div.id = "player" + i;
-        div.className = (i === playerIndex) ? "self_player" : "player";
+    showPreview();
 
-        let elem = document.createElement("p");
-        let text = document.createElement("span");
-        text.id = "icon"+i;
-        elem.appendChild(text);
-        
-        text = document.createTextNode((i === playerIndex ? "You (Player " + i + ")" : "Player " + i) + " ");
-        elem.appendChild(text);
-        let slot = document.createElement("span");
-        slot.id = "lives" + i;
-        elem.appendChild(slot);
-        div.appendChild(elem);
-
-        elem = document.createElement("p");
-        text = document.createTextNode("Secret: ");
-        slot = document.createElement("span");
-        slot.classList.add("card-list");
-        slot.id = "secret" + i;
-        elem.appendChild(text);
-        elem.appendChild(slot);
-        div.appendChild(elem);
-
-        const openPiles = document.createElement("div");
-        openPiles.className = "open-piles";
-        div.appendChild(openPiles);
-        
-        elem = document.createElement("p");
-        text = document.createTextNode("Yes: "); // And then create a list of no's
-        slot = document.createElement("span");
-        slot.classList.add("card-list");
-        slot.id = "yes" + i;
-        elem.appendChild(text);
-        elem.appendChild(slot);
-        openPiles.appendChild(elem);
-
-        elem = document.createElement("p");
-        text = document.createTextNode("No: "); // And then create a list of no's
-        slot = document.createElement("span");
-        slot.classList.add("card-list");
-        slot.id = "no" + i;
-        elem.appendChild(text);
-        elem.appendChild(slot);
-        openPiles.appendChild(elem);
-
+    game.players.forEach((p, i) => {    
         if (i === playerIndex) {
-            document.getElementById("self-area").appendChild(div);
+
         } else {
-            document.getElementById("players").appendChild(div);
+            // Create play areas
+            const sidebar = document.getElementById("players-sidebar");
+            const row = makeElement(sidebar, "player-row", "div");
+            const info = makeElement(row, "player-info", "div");
+            let elem = makeElement(info, "", "span");
+            makeElement(elem, "icon"+i, "span");
+            text = document.createTextNode("Player" + i);
+            elem.appendChild(text);
+            makeElement(info, "lives"+i, "div");
+            makeElement(info, "secret"+i, "div");
+
+            const wrapper = makeElement(row, "mini-piles-wrapper", "div");
+            let pile = makeElement(wrapper, "mini-pile", "div");
+            let label = makeElement(pile, "mini-pile-label", "div");
+            label.textContent = "Yes";
+            let yes = makeElement(pile, "mini-card-display", "div");
+            yes.classList.add("yes"+i);
+            pile = makeElement(wrapper, "mini-pile", "div");
+            label = makeElement(pile, "mini-pile-label", "div");
+            label.textContent = "No";
+            let no = makeElement(pile, "mini-card-display", "div");
+            no.classList.add("no"+i);
+
+            // Create hand?
         }
 
-        elem = document.createElement("p");
-        elem.id = "handp"+i;
-        if (i != playerIndex) elem.style.display = "none";
-        text = document.createTextNode("Hand: ");
-        slot = document.createElement("span");
-        slot.classList.add("card-list");
-        slot.id = (i == playerIndex) ? "hand" : "hand"+i;
-        elem.appendChild(text);
-        elem.appendChild(slot);
-        div.appendChild(elem);
+        // elem = document.createElement("p");
+        // elem.id = "handp"+i;
+        // if (i != playerIndex) elem.style.display = "none";
+        // text = document.createTextNode("Hand: ");
+        // slot = document.createElement("span");
+        // slot.classList.add("card-list");
+        // slot.id = (i == playerIndex) ? "hand" : "hand"+i;
+        // elem.appendChild(text);
+        // elem.appendChild(slot);
+        // div.appendChild(elem);
 
         
     });
@@ -138,31 +125,33 @@ socket.on('gameStart', (gameState) => {
     loadGame();
 });
 
+function makeElement(parent, className, type) {
+    const elem = document.createElement(type);
+    if (className !== "") elem.className = className;
+    parent.appendChild(elem);
+    return elem;
+}
+
 function loadGame() {
     document.getElementById('phase').innerText = game.phase;
     document.getElementById('turn').innerText = game.turn;
     document.getElementById('deck-size').innerText = game.deckSize;
 
     game.players.forEach((p, i) => {
-        let elem = document.getElementById("secret"+i);
-        generateList(elem, [p.secret], false);
-        // if (i === playerIndex) {
-        //     elem.innerText = "???"
-        // } else {
-        //     generateList(elem, [p.secret], false);
-        // }
-        elem = document.getElementById("lives"+i);
+        let elem = getElementByUniqueClass("secret"+i);
+        elem.innerHTML = theme.parse(p.secret);
+        elem = getElementByUniqueClass("lives"+i);
         elem.innerText = "❤️".repeat(STARTING_LIVES - p.guesses);
 
-        elem = document.getElementById("yes"+i);
+        elem = getElementByUniqueClass("yes"+i);
         generateList(elem, p.yes, false);
-        elem = document.getElementById("no"+i);
+        elem = getElementByUniqueClass("no"+i);
         generateList(elem, p.no, false);
 
-        if (i == playerIndex) {
-            elem = document.getElementById("hand");
-            generateList(elem, p.hand, true);
-        }
+        // TODO: Resolve hand
+        if (i !== playerIndex) return;
+        elem = getElementByUniqueClass("hand"+i);
+        generateList(elem, p.hand, true);
     });
 
     showPreview();
@@ -171,7 +160,7 @@ function loadGame() {
 function showPreview() {
     const guess = [0, 1, 2].map(i => parseInt(document.getElementById('guess'+i).value));
     const elem = document.getElementById("guessPreview");
-    elem.innerHTML = theme.parse(guess);
+    elem.innerHTML = theme.parse(guess); // TODO: Fix: This has an extra layer of card div 
 }
 
 function generateList(slot, arr, playable) {
@@ -185,11 +174,11 @@ function generateList(slot, arr, playable) {
 }
 
 function addLog(text) {
-    const logs = document.getElementById("log");
+    const logs = document.getElementById("log_contents");
     const autoScroll = logs.scrollHeight - logs.scrollTop - logs.clientHeight <= SCROLL_THRESHOLD;
     // console.log(logs.scrollHeight - logs.scrollTop);//
     const log = document.createElement("div");
-    log.className = "log-message";
+    log.className = "log-message"; // Currently unused
     log.textContent = text;
     logs.appendChild(log);
 
@@ -232,7 +221,6 @@ socket.on('cardPlayed', (data) => {
     // console.log("Received 'cardPlayed'");
     // console.log(data);
     addLog(`${data.pile ? "✅":"❌"} Player ${data.playerIndex} played ${theme.getText(data.card)} to the '${data.pile ? "Yes" : "No"}' pile.`)
-    // addLog(`Player ${data.playerIndex} played ${theme.getText(data.card)} to pile '${data.pile ? "Yes✅" : "No❌"}'.`)
 
     const player = game.players[data.playerIndex];
     if (data.playerIndex == game.playerIndex) {
@@ -254,7 +242,8 @@ socket.on('cardPlayed', (data) => {
     (data.pile ? player.yes : player.no).push(data.card);
 
     // Display card
-    const slot = document.getElementById((data.pile ? "yes" : "no") + data.playerIndex);
+    const slot = getElementByUniqueClass((data.pile ? "yes" : "no") + data.playerIndex);
+    console.log(slot);//
     generateList(slot, player[data.pile ? "yes" : "no"], false);
 
     game.turn = data.newTurn;
@@ -267,7 +256,7 @@ socket.on('guessMade', (data) => {
     const player = game.players[data.playerIndex];
     if (data.win) { 
         addLog(`🏆 Player ${data.playerIndex} has correctly guessed ${theme.getText(data.guess)} and won!`);
-        document.getElementById("icon" + data.playerIndex).textContent = "⭐";
+        getElementByUniqueClass("icon" + data.playerIndex).textContent = "⭐";
         console.log("Game over. Player " + data.playerIndex + " has won.")
         if (data.playerIndex === playerIndex) {
             player.secret = data.guess;
@@ -297,12 +286,12 @@ socket.on('deactivate', (data) => {
     game.players[data.playerIndex].active = false;
     game.turn = data.turn;
 
-    document.getElementById("icon" + data.playerIndex).textContent = data.reason == "guess" ? "💀" : "🔌";
+    getElementByUniqueClass("icon" + data.playerIndex).textContent = data.reason == "guess" ? "💀" : "🔌";
     if (data.reason == "guess") addLog(`💀 Player ${data.playerIndex} is out.`);
-    else addLog(`🔌 Player ${data.playerIndex} has left the game.`);
+    else addLog(`Player ${data.playerIndex} has left the game.`);
 
     if (data.playerIndex !== playerIndex) {
-        document.getElementById("handp"+data.playerIndex).style.display = "inline";
+        document.getElementById("handp"+data.playerIndex).style.display = "inline"; // TODO: Resolve this
         generateList(document.getElementById("hand"+data.playerIndex), data.hand, false);
     }
     loadGame();

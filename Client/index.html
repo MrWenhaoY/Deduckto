@@ -7,74 +7,132 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="favicon.png">
     <script src="/socket.io/socket.io.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
-
     <script src="themes.js"></script>
     <script src="themeloader.js"></script>
 </head>
-<body style="overflow: hidden; overscroll-behavior: none;">
-    <!-- <canvas id="canvas"></canvas> -->
+<body>
     <script src="index.js"></script>
     <div class="home">
-        <div id="start-menu" class="reset-home">
-            <div class="center-buttons elementToFadeIn">
-                <h1>Deduckto</h1>
-                <button class="home-button" onclick="newGame()">Create New Game</button>
-                <button class="home-button" onclick="showJoin()">Join Existing Game</button>
-            </div>
-            <div class="screen-lobby elementToFadeIn">
-                <h1>Game ID: <span id="game-id"></span></h1>
-                <p>Players Present: <span id="num-players">0</span></p>
-                <button class="home-button" onclick="startGame()">START</button>
-            </div>
-            <div class="join-screen elementToFadeIn">
-                <h1>Input Code:</h1>
-                <input id="join-code" style="margin-right: 4px;">
-                <button class="home-button home-button2" onclick="joinGame()">Join</button>
-            </div>
-            <div class="waiting-room elementToFadeIn">
-                <h1>Game ID: <span id="game-id-2"></span></h1>
-                <p>Players Present: <span id="num-players-2">0</span></p>
-                <button class="home-button" onclick="startGame()">READY</button>
-                <p>Controls:<br>
-                    Click on a card in your hand to play it. <br>
-                    Use the selectors to choose the properties of your guess.<br>
-                    Click the "guess" button to make a guess.
-                </p>
-            </div>
+    <div id="start-menu" class="reset-home">
+        <div class="center-buttons elementToFadeIn">
+            <h1>Deduckto</h1>
+            <button class="home-button" onclick="newGame()">Create New Game</button>
+            <button class="home-button" onclick="showJoin()">Join Existing Game</button>
         </div>
-        <div id="game" class="noselect" style="display:none;">
-            <div id="stats-panel" class="panel">
-                <div style="display:none">Game Phase: <span id="phase"></span></div>
-                <div>Player <span id="self-name"></span></div>
-                <div>Player <span id="turn"></span>'s Turn</div>
-                <div>Deck Size: <span id="deck-size"></span></div>
+        <div class="screen-lobby elementToFadeIn">
+            <h1>Game ID: <span id="game-id"></span></h1>
+            <p>Players Present: <span id="num-players">0</span></p>
+            <button class="home-button" onclick="startGame()">START</button>
+        </div>
+        <div class="join-screen elementToFadeIn">
+            <h1>Input Code:</h1>
+            <input id="join-code" style="margin-right: 4px;">
+            <button class="home-button home-button2" onclick="joinGame()">Join</button>
+        </div>
+        <div class="waiting-room elementToFadeIn">
+            <h1>Game ID: <span id="game-id-2"></span></h1>
+            <p>Players Present: <span id="num-players-2">0</span></p>
+            <button class="home-button" onclick="startGame()">READY</button>
+            <p>Controls:<br>
+                Click on a card in your hand to play it. <br>
+                Use the selectors to choose the properties of your guess.<br>
+                Click the "guess" button to make a guess.
+            </p>
+        </div>
+    </div>
+    </div>
+
+    <div id="game-container" class="hidden">
+        <div class="panel stats-panel">
+            <div style="display:none;">Phase <span id="phase"></span></div>
+            <div>Player <span id="self-name"></span></div>
+            <div>Player <span id="turn"></span>'s Turn</div>
+            <div>Deck Size: <span id="deck-size"></span></div>
+        </div>
+
+        <div class="panel hand-panel">
+            <div class="hand-label">Hand</div>
+            <div id="hand" class="cards">
+
+                <div class="card">
+                    <img src="Assets/color/color1.png" class="layer0">
+                    <img src="Assets/item/item1.png" class="layer1">
+                    <img src="Assets/person/person1.png" class="layer2">
+                </div>
+
             </div>
-            <!-- <div id="main-stats">
-                <p class="stats" style="display:none">Game Phase: <span id="phase"></span></p><br>
-                <p class="stats">Player <span id="self-name"></span></p><br>
-                <p class="stats">Player <span id="turn"></span>'s Turn</p><br>
-                <p class="stats">Deck Size: <span id="deck-size"></span></p>
-            </div> -->
-            <div id="play-area" class="panel">
-                <p>Hand: <span id="hand" class="card-list"></span></p>
-                <div id="guess-container" class="object-container">
+            <div class="guess-area">                
+                <div class="guess-inputs">
                     <select id="guess0"></select>
                     <select id="guess1"></select>
                     <select id="guess2"></select>
-                    <button onclick="makeGuess()">Guess</button>
-                    <span id="guessPreview" style="display:inline;"></span>
+                </div>
+                <div id="guessPreview"></div>
+                <button class="submit-btn" onclick="makeGuess()">
+                    Guess
+                </button>
+            </div>
+        </div>
+
+        <div class="panel log-panel">
+        <div class="log-header">Gamelog</div>
+        <div id="log_contents" class="log-content">
+            <div class="log-message">🔎 New game of Deduckto has started!</div>
+        </div>
+    </div>
+
+        <div id="main-action-area" class="panel">
+            <div class="self-header">
+                <h2><span id="self_icon"></span>Player<span id="pIndex">#</span> (You) <span id="lives">😃</span></h2>
+                <div id="secret"></div>
+            </div>
+            
+            <div class="piles-container">
+                <div class="pile" id="yes-box">
+                    <div class="pile-label">YES</div>
+                    <div id="self-yes" class="card-display-area"></div>
+                </div>
+
+                <div class="pile" id="no-box">
+                    <div class="pile-label">NO</div>
+                    <div id="self-no" class="card-display-area"></div>
                 </div>
             </div>
-            <div id="log" class="panel log-container"></div>
-            <div id="self-area">
-                
-            </div>
-            <div id="players"> <!--class="object-container"-->
+        </div>
 
-            </div>
+        <div id="players-sidebar" class="panel">
+            <!-- <div class="player-row">
+                <div class="player-info">
+                    <span><span>I</span>P2</span>
+                    <div>Hearts</div>
+                    <div class="secret1">
+                        <div class="card">
+                            <img src="Assets/color/color1.png" class="layer0">
+                            <img src="Assets/item/item1.png" class="layer1">
+                            <img src="Assets/person/person1.png" class="layer2">
+                        </div>
+                    </div>
+                </div>
+                <div class="mini-piles-wrapper">
+                    <div class="mini-pile">
+                        <div class="mini-pile-label">Yes</div>
+                        <div class="mini-card-display">
+                            <div class="card"></div>
+                        </div>
+                    </div>
+                    <div class="mini-pile">
+                        <div class="mini-pile-label">No</div>
+                        <div class="mini-card-display">
+                            <div class="card"></div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+
 
         </div>
+    </div>
+
 </body>
 </html>

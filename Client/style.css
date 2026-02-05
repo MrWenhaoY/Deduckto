@@ -1,95 +1,277 @@
 :root {
-    --card-height: 80px;
-    --card-ratio: 1.41; /* width / height*/
     --border-color: #333;
+    --hand-color: #ff8c00;
+    --log-color: #d9534f;
 }
 
-html {
-    overflow-x: hidden;
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 10px;
+    background-color: #f4f4f4;
+    height: 100vh;
+    box-sizing: border-box;
 }
 
-p {
-    color:#15514A;
+#game-container {
+    grid-template-columns: 1fr 3fr 1fr 3fr;
+    grid-template-rows: 150px 1fr;
+    gap: 10px;
+    height: 100%;
 }
 
-p, h1, h2 {
-    font-family: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+.panel {
+    background: white;
+    border: 2px solid var(--border-color);
+    padding: 10px;
+    overflow: visible;
 }
 
-/* body {
-    background-image: url(bg.jpg);
-} */
 
-canvas {
-    position:absolute;
-    top: 0px;
-    left: 0px;
-}
-
-.card-list {
+/* Top Left: Player Stats */
+.stats-panel {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
 }
 
-.card-container {
-    /* position: relative; */
-    /* width: calc(var(--card-height) * var(--card-ratio)); */
-    aspect-ratio: var(--card-ratio);
-    height: var(--card-height);
-    border: 1px solid black;
+/* Top Center: Hand & Guess */
+.hand-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    grid-column-start: span 2;
+    padding: 0px;
 }
-.card-img {
+.hand-label { color: var(--hand-color); font-weight: bold; font-size: 1.2rem; }
+
+.cards {
+    display: flex;
+    gap: 12px;
+    padding: 5px;
+}
+.card {
+    position: relative;
+    width: 70px; 
+    aspect-ratio: 1.41; 
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    background-color: #fff;
+    /* transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; */
+    transition: margin 0.3s ease, transform 0.2s ease-out, border-color 0.3s ease, box-shadow 0.2s ease-out;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: scale(2); /* Enlarges to 2.5x size */
+    z-index: 100; /* Pops to the very front */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    margin: 0 25px;
+}
+
+/* The three layers of a card*/
+.card img {
     position: absolute;
-    /* top: 0;
-    left: 0; */
-    /* width: 100%;
-    height: 100%; */
-    /* object-fit: cover; */
-    /* width: calc(var(--card-height) * var(--card-ratio)); */
-    aspect-ratio: var(--card-ratio);
-    height: var(--card-height);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none; /* Helps hover stay smooth */
 }
 
-#log{
+/* Layer ordering to control overlap */
+.layer0 { z-index: 1; }
+.layer1 { z-index: 2; }
+.layer2 { z-index: 3; }
+
+.guess-area {
+    border-top: 1px solid #ccc;
+    width: 100%;
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    justify-content: center;
+    gap: 12px; 
+    padding: 5px 5px;
+    flex-grow: 1;
+}
+
+.guess-inputs {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.guess-inputs select {
+    padding: 4px;
+    font-size: 0.85rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.submit-btn {
+    background-color: var(--hand-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+/* Top Right: Gamelog */
+.log-panel {
     display: flex;
     flex-direction: column;
     height: 100%;
-    /* Ensure the main panel padding is consistent */
     padding: 10px; 
+    padding-top: 5px;
     box-sizing: border-box; 
-    /* overflow-y: auto; */
-    /* border: 1px solid gray; */
-    /* width: 300px; */
-    /* height: 200px; */
+    overflow: visible;
 }
 
-.log-message {
-    /* font-size: 0.9rem; 
+.log-header { 
+    color: var(--log-color); 
+    font-weight: bold; 
+    border-bottom: 1px solid #000;
+    padding-bottom: 5px;
+    flex-shrink: 0; /* Prevents the header from shrinking */
+}
+
+.log-content { 
+    font-size: 0.9rem; 
     line-height: 1.4; 
-    color: #555; */
+    color: #555;
     overflow-y: auto;
     flex-grow: 1;
     
     /* Provides the margin at the bottom of the text */
     padding-bottom: 15px; 
     
-    /* Helps scrollbar stay inside the padding */
+    /* Helps the scrollbar stay inside the padding */
     padding-right: 5px; 
 }
-
-.player {
-    border: 1px solid black;
-}
-.self_player {
-    border: 2px solid rgb(61, 255, 71);
-}
-
-/* #players {
+/* Bottom Left: Action Area */
+#main-action-area {
+    grid-column-start: span 2;
     display: flex;
-} */
+    flex-direction: column;
+    padding-top: 0px;
+}
+.self-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 10px;
+}
 
-#controls {
-    display: none;
+.piles-container {
+    display: flex;
+    gap: 20px;
+    flex-grow: 1;
+}
+.pile {
+    flex: 1;
+    border: 2px solid var(--border-color);
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.pile-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    pointer-events: none;
+}
+
+.card-display-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+}
+
+#players-sidebar {
+    grid-column-start: span 2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Sidebar Row Layout */
+.player-row {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    flex-direction: row;
+    gap: 8px;
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.mini-piles-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+
+.mini-pile {
+    flex: 1;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 8px;
+    background: #fafafa;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height:auto;
+}
+
+.mini-pile-label {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #888;
+    text-transform: uppercase;
+    margin-right: 5px;
+}
+
+.mini-card-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+}
+
+.hidden {
+    display:none;
+}
+
+.elementToFadeIn {
+    -webkit-animation: fadein 1s linear;
+    animation: fadein 1s linear;
 }
 
 #start-menu {
@@ -106,6 +288,12 @@ canvas {
     align-items: center;
     display: flex;
     justify-content: center;
+}
+
+.center-buttons {
+    padding: 20px;
+    align-content: center;
+    text-align: center;
 }
 
 .home-button {
@@ -127,57 +315,6 @@ canvas {
     width: auto;
 }
 
-.button {
-	--offset: 10px;
-	--border-size: 2px;
-	
-	display: block;
-	position: relative;
-	padding: 1.5em 3em;
-	appearance: none;
-	border: 0;
-	background: transparent;
-	color: #e55743;
-	text-transform: uppercase;
-	letter-spacing: .25em;
-	outline: none;
-	cursor: pointer;
-	font-weight: bold;
-	border-radius: 0;
-	box-shadow: inset 0 0 0 var(--border-size) currentcolor;
-	transition: background .8s ease;
-	
-	&:hover {
-		background: rgba(100, 0, 0, .03);
-	}
-	
-}
-
-.elementToFadeIn {
-    -webkit-animation: fadein 1s linear;
-    animation: fadein 1s linear;
-}
-
-@-webkit-keyframes fadein {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-@keyframes fadein {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-.home-button2 {
-padding: 8px;
-}
-
-.center-buttons {
-    padding: 20px;
-    align-content: center;
-    text-align: center;
-}
-
 .screen-lobby {
     padding: 20px;
     align-content: center;
@@ -191,8 +328,6 @@ padding: 8px;
     text-align: center;
     display: none;
 }
-
-
 
 .waiting-room {
   padding: 50px;
@@ -210,77 +345,11 @@ padding: 8px;
     float: left;
 }
 
-#player-button {
-    display: none;
-    position:absolute;
-    top: 0px;
-    left: 0px;
-    width: 100vw;
-    height: 100vh;
-}
-
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
-        -webkit-user-select: none; /* Safari */
-        -khtml-user-select: none; /* Konqueror HTML */
-        -moz-user-select: none; /* Old versions of Firefox */
-            -ms-user-select: none; /* Internet Explorer/Edge */
-                user-select: none; /* Non-prefixed version, currently
-                                    supported by Chrome, Edge, Opera and Firefox */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
-
-/* @keyframes sway  {
-    0% { transform: rotate(8deg); }
-    50% { transform: rotate(-8deg); }
-    100% { transform: rotate(8deg); }
-} */
-
-
-#game {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1.5fr;
-    grid-template-rows: 150px 1fr;
-    gap: 10px;
-    height: 100%;
-}
-
-.panel {
-    background: white;
-    border: 2px solid var(--border-color);
-    padding: 10px;
-    overflow: hidden;
-}
-
-#stats-panel {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.1rem;
-}
-
-.object-container {
-    display: flex;
-    justify-content: center; /* Horizontal centering */
-    align-items: center; /* Vertical centering */
-    width: 100%;
-}
-
-.vertical-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.open-piles {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    p {
-        border: 1px solid red;
-        margin: 0 auto;
-    }   
-}
-
-/* .stats {
-    display: inline;
-    padding-right: 15px;
-} */
