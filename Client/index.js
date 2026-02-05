@@ -174,7 +174,10 @@ function generateList(slot, arr, playable) {
     arr.forEach((card, i) => {
         const elem = document.createElement("span");
         elem.innerHTML = theme.parse(card) + " ";
-        if (playable) elem.setAttribute("onclick", "playCard("+i+")");
+        if (playable) {
+            elem.setAttribute("onclick", "playCard("+i+")");
+            elem.firstChild.classList.add("expandable");
+        }
         slot.appendChild(elem);
     });
 }
