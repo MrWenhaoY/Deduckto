@@ -110,20 +110,15 @@ socket.on('gameStart', (gameState) => {
             label.textContent = "No";
             let no = makeElement(pile, "mini-card-display", "div");
             no.classList.add("no"+i);
-
-            // Create hand?
+            
+            pile = makeElement(wrapper, "mini-pile", "div");
+            pile.style.display = "none";
+            pile.classList.add("hand-pile"+i);
+            label = makeElement(pile, "mini-pile-label", "div");
+            label.textContent = "Hand";
+            let hand = makeElement(pile, "mini-card-display", "div");
+            hand.classList.add("hand"+i);
         }
-
-        // elem = document.createElement("p");
-        // elem.id = "handp"+i;
-        // if (i != playerIndex) elem.style.display = "none";
-        // text = document.createTextNode("Hand: ");
-        // slot = document.createElement("span");
-        // slot.classList.add("card-list");
-        // slot.id = (i == playerIndex) ? "hand" : "hand"+i;
-        // elem.appendChild(text);
-        // elem.appendChild(slot);
-        // div.appendChild(elem);
 
         
     });
@@ -154,8 +149,6 @@ function loadGame() {
         elem = getElementByUniqueClass("no"+i);
         generateList(elem, p.no, false);
 
-        // TODO: Resolve hand
-        if (i !== playerIndex) return;
         elem = getElementByUniqueClass("hand"+i);
         generateList(elem, p.hand, true);
     });
@@ -166,7 +159,7 @@ function loadGame() {
 function showPreview() {
     const guess = [0, 1, 2].map(i => parseInt(document.getElementById('guess'+i).value));
     const elem = document.getElementById("guessPreview");
-    elem.innerHTML = theme.parse(guess); // TODO: Fix: This has an extra layer of card div 
+    elem.innerHTML = theme.parse(guess);
 }
 
 function generateList(slot, arr, playable) {
@@ -300,8 +293,9 @@ socket.on('deactivate', (data) => {
     else addLog(`Player ${data.playerIndex} has left the game.`);
 
     if (data.playerIndex !== playerIndex) {
-        document.getElementById("handp"+data.playerIndex).style.display = "inline"; // TODO: Resolve this
-        generateList(document.getElementById("hand"+data.playerIndex), data.hand, false);
+        getElementByUniqueClass("hand-pile"+data.playerIndex).style.display = "flex";
+        const hand = getElementByUniqueClass("hand"+data.playerIndex);
+        generateList(hand, data.hand, false);
     }
     loadGame();
 });
