@@ -65,6 +65,12 @@ socket.on('gameStart', (gameState) => {
     document.getElementsByClassName('waiting-room')[0].style.display = 'none';
     document.getElementById('game-container').style.display = 'grid';
     
+    // Hide player sidebar if single player
+    if (game.players.length === 1) {
+        document.getElementById("players-sidebar").style.display = 'none';
+        document.getElementById("main-action-area").style.gridColumnStart = 'span 4';
+    }
+
     // Set up guess
     [0, 1, 2].forEach(i => {
         const guess = document.getElementById('guess'+i);
