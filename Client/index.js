@@ -94,7 +94,7 @@ socket.on('gameStart', (gameState) => {
             const info = makeElement(row, "player-info", "div");
             let elem = makeElement(info, "", "span");
             makeElement(elem, "icon"+i, "span");
-            text = document.createTextNode("Player" + i);
+            text = document.createTextNode("Player " + i);
             elem.appendChild(text);
             makeElement(info, "lives"+i, "div");
             makeElement(info, "secret"+i, "div");
@@ -264,7 +264,7 @@ socket.on('guessMade', (data) => {
     console.log(data);
     const player = game.players[data.playerIndex];
     if (data.win) { 
-        addLog(`🏆 Player ${data.playerIndex} has correctly guessed ${theme.getText(data.guess)} and won!`);
+        addLog(`🏆 Player ${data.playerIndex} correctly guessed ${theme.getText(data.guess)} and won!`);
         getElementByUniqueClass("icon" + data.playerIndex).textContent = "⭐";
         console.log("Game over. Player " + data.playerIndex + " has won.")
         if (data.playerIndex === playerIndex) {
@@ -279,7 +279,7 @@ socket.on('guessMade', (data) => {
             });
         }
     } else {
-        addLog(`💔 Player ${data.playerIndex} has incorrectly guessed ${theme.getText(data.guess)} and lost a life!`)
+        addLog(`💔 Player ${data.playerIndex} incorrectly guessed ${theme.getText(data.guess)} and lost a life!`)
     }
     console.log("Player " + data.playerIndex + " has guessed " + data.guesses + " times.")
     if (!data.win) player.guesses = data.guesses; // Don't deduct lives if player has already won
