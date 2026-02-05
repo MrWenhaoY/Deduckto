@@ -104,12 +104,12 @@ class Game {
         const nextPlayer = this.players[(playerIndex + 1) % this.NUM_PLAYERS]
         if (!card || nextPlayer.yes.length > 0 || nextPlayer.no.length > 0) return FAILURE;
 
-        // PLay the card if valid
+        // Play the card if valid
         if (match(card, nextPlayer.secret)) {
             nextPlayer.yes.push(card);
-        } else if(!player.hand.some(c => match(c, nextPlayer.secret))) {
+        } else {
             nextPlayer.no.push(card);
-        } else return FAILURE;
+        }
         player.hand.splice(cardIndex, 1);
         this.draw(player);
 
@@ -131,7 +131,7 @@ class Game {
 
         player.hand.splice(cardIndex, 1);
         const pile = match(card, player.secret);
-        (pile > 0 ? player.yes : player.no).push(card);
+        player[pile > 0 ? "yes" : "no"].push(card);
         
         // Automatically attempt to draw card and end turn
         const result = this.draw(player);
@@ -156,13 +156,10 @@ class Game {
         const player = this.players[playerIndex];
         if (this.phase !== GAMEPHASE.PLAY || this.turn !== playerIndex) return FAILURE;
         if (!player || !isValidCard(guess, this.N)) return FAILURE;
-        // if (player.unflipped.length > 0 && !(player.unflipped.findIndex(x => x === hostage) >= 0)) return FAILURE;
         
-        // if (player.guesses >= 2) hostage = undefined;
-
         player.guesses += 1;
 
-        const result = [0, 1, 2].every(i => player.secret[i] === guess[i]);
+        const result = match(player.secret, guess) === 3;
         if (result) {
             // Do game end
             this.phase = GAMEPHASE.END;
@@ -176,9 +173,7 @@ class Game {
                 playerIndex: playerIndex
             };
         }
-        // Bad guess
-        // if (hostage !== undefined) player.unflipped = player.unflipped.filter(x => x != hostage);
-        
+
         this.nextTurn();
         const output = {
             success: true, 
@@ -213,7 +208,7 @@ class Game {
         }
     }
 
-    // Player leaves game due to *external* factors
+    // Player leaves game, possibly due to external factors
     deactivate(playerSocket) {
         const playerIndex = this.players.findIndex(p => p.name == playerSocket);
         if (playerIndex < 0) return FAILURE;
@@ -235,7 +230,7 @@ class Game {
     // Creates a sanitized gamestate for the specified player
     sanitized(playerSocket) {
         const playerIndex = this.players.findIndex(p => p.name == playerSocket);
-        if (!(playerIndex >= 0)) return undefined;
+        if (playerIndex < 0) return null;
 
         const gameState = {
             N: this.N,
@@ -259,7 +254,6 @@ class Player {
         this.yes = [];
         this.no = [];
         this.guesses = 0;
-        this.unflipped = [0, 1]; // Piles unflipped. 0=no, 1=yes
         this.active = true;
     }
 
