@@ -13,6 +13,13 @@ body {
     box-sizing: border-box;
 }
 
+#join-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center; 
+}
+
 #game-container {
     grid-template-columns: 1fr 3fr 1fr 3fr;
     grid-template-rows: 150px 1fr;
