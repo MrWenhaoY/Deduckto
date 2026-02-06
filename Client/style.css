@@ -216,8 +216,8 @@ body {
     display: grid;
     grid-template-columns: 100px 1fr;
     flex-direction: row;
-    gap: 8px;
-    padding: 12px 0;
+    gap: 2px;
+    padding: 12px 10px 12px 0;
     border-bottom: 1px solid #ddd;
 }
 
@@ -352,4 +352,19 @@ body {
     -moz-user-select: none; /* Old versions of Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 10px rgba(255, 140, 0, 0.4); }
+    50% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.8); }
+    100% { box-shadow: 0 0 10px rgba(255, 140, 0, 0.4); }
+}
+
+.active-turn {
+    border: 2px solid var(--hand-color) !important;
+    box-shadow: 0 0 15px rgba(255, 140, 0, 0.6);
+    background-color: rgba(255, 140, 0, 0.05) !important; /* Slight tint */
+    position: relative;
+    transition: all 0.4s ease;
+    animation: pulse-glow 2s infinite;
 }

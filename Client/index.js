@@ -57,6 +57,7 @@ socket.on('gameStart', (gameState) => {
     document.getElementById("secret").classList.add("secret"+playerIndex);
     document.getElementById("lives").classList.add("lives"+playerIndex);
     document.getElementById("hand").classList.add("hand"+playerIndex);
+    document.getElementById("main-action-area").classList.add("player"+playerIndex);
 
     // Load theme
     theme = new ThemeLoader("maple", game.N);
@@ -91,6 +92,7 @@ socket.on('gameStart', (gameState) => {
             // Create play areas
             const sidebar = document.getElementById("players-sidebar");
             const row = makeElement(sidebar, "player-row", "div");
+            row.classList.add("player"+i);
             const info = makeElement(row, "player-info", "div");
             let elem = makeElement(info, "", "span");
             makeElement(elem, "icon"+i, "span");
@@ -135,8 +137,8 @@ function makeElement(parent, className, type) {
 
 function loadGame() {
     document.getElementById('phase').innerText = game.phase;
-    document.getElementById('turn').innerText = game.turn;
     document.getElementById('deck-size').innerText = game.deckSize;
+    updateTurn(game.turn);
 
     game.players.forEach((p, i) => {
         let elem = getElementByUniqueClass("secret"+i);
@@ -149,8 +151,10 @@ function loadGame() {
         elem = getElementByUniqueClass("no"+i);
         generateList(elem, p.no, false);
 
-        elem = getElementByUniqueClass("hand"+i);
-        generateList(elem, p.hand, true);
+        if (Array.isArray(p.hand)) {
+            elem = getElementByUniqueClass("hand"+i);
+            generateList(elem, p.hand, i === playerIndex);
+        }
     });
 
     showPreview();
@@ -178,9 +182,8 @@ function generateList(slot, arr, playable) {
 function addLog(text) {
     const logs = document.getElementById("log_contents");
     const autoScroll = logs.scrollHeight - logs.scrollTop - logs.clientHeight <= SCROLL_THRESHOLD;
-    // console.log(logs.scrollHeight - logs.scrollTop);//
     const log = document.createElement("div");
-    log.className = "log-message"; // Currently unused
+    // log.className = "log-message"; // Currently unused
     log.textContent = text;
     logs.appendChild(log);
 
@@ -245,11 +248,9 @@ socket.on('cardPlayed', (data) => {
 
     // Display card
     const slot = getElementByUniqueClass((data.pile ? "yes" : "no") + data.playerIndex);
-    console.log(slot);//
     generateList(slot, player[data.pile ? "yes" : "no"], false);
 
-    game.turn = data.newTurn;
-    document.getElementById("turn").textContent = game.turn;
+    updateTurn(data.newTurn);
 });
 
 socket.on('guessMade', (data) => {
@@ -300,6 +301,13 @@ socket.on('deactivate', (data) => {
     loadGame();
 });
 
+function updateTurn(newTurn) {
+    game.turn = newTurn;
+    document.getElementById("turn").textContent = newTurn;
+    // TODO: Adjust turn border depending on game phase?
+    document.querySelectorAll(".active-turn").forEach(elem => elem.classList.remove("active-turn"));
+    getElementByUniqueClass("player"+game.turn).classList.add("active-turn");
+}
 
 function showJoin() {
     document.getElementsByClassName('center-buttons')[0].style.display='none';
