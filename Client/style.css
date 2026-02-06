@@ -114,7 +114,7 @@ body {
     background: #fff;
 }
 
-.submit-btn {
+.submit-button {
     background-color: var(--hand-color);
     color: white;
     border: none;
@@ -274,6 +274,18 @@ body {
     animation: fadein 1s linear;
 }
 
+#title {
+    font-size: 4vw;
+    margin-bottom: 1em;
+}
+
+.title-icon {
+    height: 1.65em; /* Matches the text height automatically */
+    width: auto;
+    margin-right: 5px;
+    transform: translateY(0.65em) translateX(0.1em);
+}
+
 #start-menu {
     position: absolute;
     background-color:#F5F3F6;
@@ -288,6 +300,7 @@ body {
     align-items: center;
     display: flex;
     justify-content: center;
+    border: 1px solid gray;
 }
 
 .center-buttons {
@@ -301,7 +314,7 @@ body {
     display: inline-block;
     font-family: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: bold;
     line-height: 20px;
     margin: 0;
     outline: none;

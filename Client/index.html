@@ -14,9 +14,9 @@
 <body>
     <script src="index.js"></script>
     <div class="home">
-    <div id="start-menu" class="reset-home">
+    <div id="start-menu">
         <div class="center-buttons elementToFadeIn">
-            <h1>Deduckto</h1>
+            <h1 id="title" class="noselect"><img src="title_icon.png" draggable="false" class="title-icon noselect" alt="D">educkto</h1>
             <button class="home-button" onclick="newGame()">Create New Game</button>
             <button class="home-button" onclick="showJoin()">Join Existing Game</button>
         </div>
@@ -69,7 +69,7 @@
                     <select id="guess2"></select>
                 </div>
                 <div id="guessPreview"></div>
-                <button class="submit-btn" onclick="makeGuess()">
+                <button class="submit-button" onclick="makeGuess()">
                     Guess
                 </button>
             </div>
