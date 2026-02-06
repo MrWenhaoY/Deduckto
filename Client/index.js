@@ -11,16 +11,12 @@ function getElementByUniqueClass(className) {
     return document.getElementsByClassName(className)[0];
 }
 
-// socket.on('gameCreated', (lobby) => {
-//     console.log("Lobby: ")
-//     console.log(lobby);
-//     document.getElementsByClassName('screen-lobby')[0].style.display='none';
-//     document.getElementsByClassName('waiting-room')[0].style.display='inline';
-//     document.getElementById('game-id').innerText = lobby.id;
-//     document.getElementById('game-id-2').innerText = lobby.id;
-//     document.getElementById('num-players').innerText = 1;
-//     document.getElementById('num-players-2').innerText = 1;
-// });
+document.getElementById('join-code').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        joinGame();
+    }
+});
 
 socket.on('newJoin', (length) => {
     console.log('Received length: ' + length);
