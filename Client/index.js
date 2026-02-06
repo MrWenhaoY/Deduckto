@@ -322,7 +322,11 @@ socket.on('deactivate', (data) => {
 function updateTurn(newTurn) {
     game.turn = newTurn;
     document.querySelectorAll(".active-turn").forEach(elem => elem.classList.remove("active-turn"));
-    if (game.phase === 1) {
+    if (game.phase === 0) {
+        document.getElementById("turn-display").style.display = "none";
+        // Highlight next player's secret during setup phase
+        getElementByUniqueClass("secret"+((playerIndex + 1) % game.players.length)).classList.add("active-turn");
+    } else if (game.phase === 1) {
         document.getElementById("turn-display").style.display = "inline";
         document.getElementById("turn").textContent = newTurn;
         getElementByUniqueClass("player"+game.turn).classList.add("active-turn");
