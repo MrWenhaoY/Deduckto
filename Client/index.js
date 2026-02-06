@@ -135,8 +135,16 @@ function makeElement(parent, className, type) {
     return elem;
 }
 
+const GAMEPHASE = ["SETUP", ]
+
 function loadGame() {
-    document.getElementById('phase').innerText = game.phase;
+    if (game.phase === 1) {
+        document.getElementById("phase").style.display = 'none';
+    } else {
+        document.getElementById("phase").style.display = 'inline';
+        document.getElementById('phase').innerText = game.phase === 0 ? "Setup Phase" : "Game Over";
+    }
+    
     document.getElementById('deck-size').innerText = game.deckSize;
     updateTurn(game.turn);
 
@@ -269,6 +277,7 @@ socket.on('guessMade', (data) => {
     if (data.win) { 
         addLog(`🏆 Player ${data.playerIndex} correctly guessed ${theme.getText(data.guess)} and won!`);
         getElementByUniqueClass("icon" + data.playerIndex).textContent = "⭐";
+        game.phase = 2;
         console.log("Game over. Player " + data.playerIndex + " has won.")
         if (data.playerIndex === playerIndex) {
             player.secret = data.guess;
@@ -312,10 +321,15 @@ socket.on('deactivate', (data) => {
 
 function updateTurn(newTurn) {
     game.turn = newTurn;
-    document.getElementById("turn").textContent = newTurn;
-    // TODO: Adjust turn border depending on game phase?
     document.querySelectorAll(".active-turn").forEach(elem => elem.classList.remove("active-turn"));
-    getElementByUniqueClass("player"+game.turn).classList.add("active-turn");
+    if (game.phase === 1) {
+        document.getElementById("turn-display").style.display = "inline";
+        document.getElementById("turn").textContent = newTurn;
+        getElementByUniqueClass("player"+game.turn).classList.add("active-turn");
+    } else {
+        document.getElementById("turn-display").style.display = "none";
+    }
+    
 }
 
 function showJoin() {

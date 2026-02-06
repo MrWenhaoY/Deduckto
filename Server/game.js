@@ -170,7 +170,8 @@ class Game {
                 guess: guess, 
                 guesses: player.guesses, 
                 card: player.secret, 
-                playerIndex: playerIndex
+                playerIndex: playerIndex,
+                newTurn: this.turn
             };
         }
 
