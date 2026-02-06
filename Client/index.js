@@ -2,6 +2,7 @@ const socket = io();
 let theme = undefined;
 let game = undefined;
 let playerIndex = -1;
+let timeout = null;
 
 const STARTING_LIVES = 3;
 const SCROLL_THRESHOLD = 10; // Pixels
@@ -70,6 +71,9 @@ socket.on('gameStart', (gameState) => {
     if (game.players.length === 1) {
         document.getElementById("players-sidebar").style.display = 'none';
         document.getElementById("main-action-area").style.gridColumnStart = 'span 4';
+        addLog("🔎 New game of Deduckto has started!")
+    } else {
+        addLog(`🛠️ Setup phase: Choose a card to play for Player ${(playerIndex + 1) % game.players.length}.`)
     }
 
     // Set up guess
@@ -86,10 +90,8 @@ socket.on('gameStart', (gameState) => {
     showPreview();
 
     game.players.forEach((p, i) => {    
-        if (i === playerIndex) {
-
-        } else {
-            // Create play areas
+        if (i !== playerIndex) {
+            // Create play areas for other players
             const sidebar = document.getElementById("players-sidebar");
             const row = makeElement(sidebar, "player-row", "div");
             row.classList.add("player"+i);
@@ -121,8 +123,6 @@ socket.on('gameStart', (gameState) => {
             let hand = makeElement(pile, "mini-card-display", "div");
             hand.classList.add("hand"+i);
         }
-
-        
     });
 
     loadGame();
@@ -209,6 +209,7 @@ socket.on('newDisconnect', (length)=> {
 socket.on("setupPlayed", (cardIndex) => {
     console.log("Setup played card " + cardIndex);
     if (game.phase === 0) {
+        timeout = setTimeout(() => addLog("⏳ Waiting for other players to complete setup..."), 500);
         const player = game.players[playerIndex];
         card = player.hand.splice(cardIndex, 1)[0];
         const nextPlayer = game.players[(playerIndex + 1) % game.players.length];
@@ -218,7 +219,15 @@ socket.on("setupPlayed", (cardIndex) => {
 })
 
 socket.on("beginPlay", (gameState) => {
+    clearTimeout(timeout); // Clear waiting message if other players finish quickly
     game = gameState;
+    // Add logs
+    const numPlayers = game.players.length;
+    game.players.forEach((p, i) => {
+        const pile = p.yes.length > 0; // true for yes and false for no
+        addLog(`🔨 Player ${(i+1) % numPlayers} played ${theme.getText(p[pile ? "yes":"no"][0])} to Player ${i}'s '${pile ? "Yes":"No"}' pile.`);
+    });
+    addLog("🔎 Setup complete. Game start!");
     loadGame();
 });
 
