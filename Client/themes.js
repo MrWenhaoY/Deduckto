@@ -23,5 +23,20 @@ const THEMES = {
         cat0_names: ALPHABET,
         cat1_names: digits,
         cat2_names: COMMONGREEK
+    },
+    maple: {
+        name: "maple",
+        type: "image",
+        max_size: 7,
+        cat0_root: "color/",
+        cat0_parse: (i) => i >= 0 ? "color" + i + ".png" : "color_unknown.png",
+        cat0_names: ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Pink"],
+        cat1_root: "person/",
+        cat1_parse: (i) => i >= 0 ? "person" + i + ".png" : "person_unknown.png",
+        cat1_names: ["Seven", "Arks", "Winter", "Gart", "Eli", "Lain", "Del Fuego"],
+        cat2_root: "item/",
+        cat2_parse: (i) => i >= 0 ? "item" + i + ".png" : "blank.png",
+        cat2_names: ["Water Bottle", "iPad", "Rocket", "Clarinet", "Flask", "Cookie", "Chessboard"],
+        toText(card) {return this.cat0_names[card[0]] + " " + this.cat1_names[card[1]] + " with " + this.cat2_names[card[2]]}
     }
 }
