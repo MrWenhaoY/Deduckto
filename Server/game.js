@@ -165,27 +165,27 @@ class Game {
             this.phase = GAMEPHASE.END;
             return {
                 success: true, 
-                end: true, 
                 win: true, 
                 guess: guess, 
                 guesses: player.guesses, 
                 card: player.secret, 
                 playerIndex: playerIndex,
-                newTurn: this.turn
+                newTurn: this.turn,
+                phase: this.phase,
+                game: this.fullGameState()
             };
         }
 
         this.nextTurn();
         const output = {
             success: true, 
-            // end: false,
             win: false, 
             guess: guess, 
             guesses: player.guesses, 
             playerIndex: playerIndex, 
-            deactivate: false
+            deactivate: false,
             // newTurn: this.turn, 
-            // hostage: hostage
+            // phase: this.phase,
         };
         if (player.guesses >= 3) {
             // Player is out of the game
@@ -193,7 +193,8 @@ class Game {
             output.deactivate = true;
             this.deactivate(playerSocket);
         }
-        output.end = this.phase == GAMEPHASE.END;
+        output.phase = this.phase;
+        if (this.phase === GAMEPHASE.END) output.game = this.fullGameState();
         output.newTurn = this.turn;
         return output;
     }
@@ -225,7 +226,9 @@ class Game {
         // Change turn if disabled player is current player
         if (this.turn == playerIndex) this.nextTurn();
 
-        return {success: true, playerIndex: playerIndex, turn: this.turn, phase: this.phase, hand: player.hand};
+        const output = {success: true, playerIndex: playerIndex, turn: this.turn, phase: this.phase, hand: player.hand};
+        if (this.phase === GAMEPHASE.END) output.game = this.fullGameState();
+        return output;
     }
 
     // Creates a sanitized gamestate for the specified player
@@ -233,7 +236,7 @@ class Game {
         const playerIndex = this.players.findIndex(p => p.name == playerSocket);
         if (playerIndex < 0) return null;
 
-        const gameState = {
+        return {
             N: this.N,
             phase: this.phase,
             turn: this.turn,
@@ -241,8 +244,16 @@ class Game {
             playerIndex: playerIndex,
             players: this.players.map(p => p.sanitized(playerSocket))
         }
+    }
 
-        return gameState;
+    fullGameState() {
+        return {
+            N: this.N,
+            phase: this.phase,
+            turn: this.turn,
+            deckSize: this.deck.length,
+            players: this.players.map(p => p.fullPlayerState())
+        }
     }
 }
 
@@ -273,6 +284,17 @@ class Player {
         else playerState.hand = null;
 
         return playerState;
+    }
+
+    fullPlayerState() {
+        return {
+            secret: this.secret,
+            hand: this.hand,
+            handSize: this.handSize,
+            yes: this.yes,
+            no: this.no,
+            guesses: this.guesses
+        }
     }
 }
 

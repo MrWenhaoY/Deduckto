@@ -285,7 +285,6 @@ socket.on('guessMade', (data) => {
     if (data.win) { 
         addLog(`🏆 Player ${data.playerIndex} correctly guessed ${theme.getText(data.guess)} and won!`);
         getElementByUniqueClass("icon" + data.playerIndex).textContent = "⭐";
-        game.phase = 2;
         console.log("Game over. Player " + data.playerIndex + " has won.")
         if (data.playerIndex === playerIndex) {
             player.secret = data.guess;
@@ -305,7 +304,8 @@ socket.on('guessMade', (data) => {
     if (!data.win) player.guesses = data.guesses; // Don't deduct lives if player has already won
     
     game.turn = data.newTurn;
-    if (data.end) game.phase = 2;
+    game.phase = data.phase;
+    if (data.game) game.players = data.game.players;
     loadGame();
 });
 
@@ -317,13 +317,16 @@ socket.on('deactivate', (data) => {
 
     getElementByUniqueClass("icon" + data.playerIndex).textContent = data.reason == "guess" ? "💀" : "🔌";
     if (data.reason == "guess") addLog(`💀 Player ${data.playerIndex} is out.`);
-    else addLog(`Player ${data.playerIndex} has left the game.`);
+    else addLog(`🔌 Player ${data.playerIndex} has left the game.`);
 
     if (data.playerIndex !== playerIndex) {
         getElementByUniqueClass("hand-pile"+data.playerIndex).style.display = "flex";
         const hand = getElementByUniqueClass("hand"+data.playerIndex);
         generateList(hand, data.hand, false);
     }
+
+    game.phase = data.phase;
+    if (data.game) game.players = data.game.players;
     loadGame();
 });
 
