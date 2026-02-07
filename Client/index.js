@@ -54,8 +54,8 @@ socket.on('gameStart', (gameState) => {
     console.log(gameState);
     game = gameState;
     playerIndex = game.playerIndex;
-    document.getElementById('self-name').innerText = playerIndex;
-    document.getElementById("pIndex").innerText = playerIndex;
+    document.getElementById('self-name').innerText = playerIndex + 1; // 1-index player #'s
+    document.getElementById("pIndex").innerText = playerIndex + 1; // 1-index player #'s
     document.getElementById("self-yes").classList.add("yes"+playerIndex);
     document.getElementById("self-no").classList.add("no"+playerIndex);
     document.getElementById("self_icon").classList.add("icon"+playerIndex);
@@ -94,7 +94,7 @@ socket.on('gameStart', (gameState) => {
             const info = makeElement(row, "player-info", "div");
             let elem = makeElement(info, "", "span");
             makeElement(elem, "icon"+i, "span");
-            text = document.createTextNode("Player " + i);
+            text = document.createTextNode("Player " + (i+1)); // 1-index player #'s
             elem.appendChild(text);
             makeElement(info, "lives"+i, "div");
             makeElement(info, "secret"+i, "div");
@@ -339,7 +339,7 @@ function updateTurn(newTurn) {
         getElementByUniqueClass("secret"+((playerIndex + 1) % game.players.length)).classList.add("active-turn");
     } else if (game.phase === 1) {
         document.getElementById("turn-display").style.display = "inline";
-        document.getElementById("turn").textContent = newTurn;
+        document.getElementById("turn").textContent = newTurn + 1; // 1-index player #'s
         getElementByUniqueClass("player"+game.turn).classList.add("active-turn");
     } else {
         document.getElementById("turn-display").style.display = "none";
