@@ -129,7 +129,7 @@ body {
     gap: 5px;
 }
 
-.guess-inputs select {
+select {
     padding: 4px;
     font-size: 0.85rem;
     border: 1px solid #ccc;
