@@ -82,6 +82,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('joinGame', (code)=> {
+        code = String(code);
         if (!code || l.sockets[socket.id] !== undefined) return;
 
         const lobby = l.lobbies[code.toUpperCase().trim()];
@@ -94,9 +95,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('start', (data)=> {
-        // if (!data) return;
-        
+    socket.on('start', ()=> {
         const lobby = l.sockets[socket.id];
         if (lobby !== undefined && lobby.game === undefined) {
             lobby.game = new g.Game(lobby);
@@ -109,6 +108,7 @@ io.on('connection', (socket) => {
 
     // Game events
     socket.on('play', (cardId) => {
+        cardId = Number(cardId);
         const lobby = l.sockets[socket.id];
         let game;
         if (lobby !== undefined && (game = lobby.game)) {
