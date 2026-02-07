@@ -71,15 +71,6 @@ socket.on('gameStart', (gameState) => {
     document.getElementById('start-menu').style.display = 'none';
     document.getElementsByClassName('waiting-room')[0].style.display = 'none';
     document.getElementById('game-container').style.display = 'grid';
-    
-    // Hide player sidebar if single player
-    if (game.players.length === 1) {
-        document.getElementById("players-sidebar").style.display = 'none';
-        document.getElementById("main-action-area").style.gridColumnStart = 'span 4';
-        addLog("🔎 New game of Deduckto has started!")
-    } else {
-        addLog(`🛠️ Setup phase: Choose a card to play for Player ${(playerIndex + 1) % game.players.length}.`)
-    }
 
     // Set up guess
     [0, 1, 2].forEach(i => {
@@ -131,6 +122,16 @@ socket.on('gameStart', (gameState) => {
     });
 
     loadGame();
+
+    // Hide player sidebar if single player
+    if (game.players.length === 1) {
+        document.getElementById("players-sidebar").style.display = 'none';
+        document.getElementById("main-action-area").style.gridColumnStart = 'span 4';
+        document.getElementById("secret").firstChild.style.transformOrigin = "top right"; // Prevent from going out of the screen
+        addLog("🔎 New game of Deduckto has started!")
+    } else {
+        addLog(`🛠️ Setup phase: Choose a card to play for Player ${(playerIndex + 1) % game.players.length}.`)
+    }
 });
 
 function makeElement(parent, className, type) {
@@ -177,6 +178,7 @@ function showPreview() {
     const guess = [0, 1, 2].map(i => parseInt(document.getElementById('guess'+i).value));
     const elem = document.getElementById("guessPreview");
     elem.innerHTML = theme.parse(guess);
+    elem.firstChild.style.transformOrigin = "bottom";
 }
 
 function generateList(slot, arr, playable, size) {
