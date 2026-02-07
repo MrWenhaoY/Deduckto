@@ -1,7 +1,7 @@
 const socket = io();
 let theme = undefined;
 let themeName = "animals"
-let game = undefined;
+let game = null;
 let playerIndex = -1;
 let timeout = null;
 
@@ -26,19 +26,25 @@ document.getElementById('join-code').addEventListener('keydown', function(event)
     }
 });
 
+socket.on('isHost', () => {
+    if (!game) {
+        document.getElementById('start-button').style.display = 'inline';
+        document.getElementById('wait-message').style.display = 'none';
+    }
+    
+})
+
 socket.on('newJoin', (length) => {
     console.log('Received length: ' + length);
     document.getElementById('num-players').innerText = length;
-    document.getElementById('num-players-2').innerText = length;
 });
 
 socket.on('joinedGame', (lobby) => {
     // Show joined game display
     document.getElementsByClassName('join-screen')[0].style.display='none';
-    document.getElementsByClassName('screen-lobby')[0].style.display='none';
     document.getElementsByClassName('waiting-room')[0].style.display='inline';
     document.getElementById('game-id-2').innerText = lobby.id;
-    document.getElementById('num-players-2').innerText = lobby.playerSockets.length;
+    document.getElementById('num-players').innerText = lobby.playerSockets.length;
 });
 
 // socket.on('lobby-closed', (lobbyId) => {
@@ -218,7 +224,6 @@ function match(c1, c2) {
 
 socket.on('newDisconnect', (length)=> {
     document.getElementById('num-players').innerText = length;
-    document.getElementById('num-players-2').innerText = length;
 });
 
 /* Game */
@@ -360,7 +365,7 @@ function joinGame() {
 
 function newGame() {
     document.getElementsByClassName('center-buttons')[0].style.display='none';
-    document.getElementsByClassName('screen-lobby')[0].style.display='inline';
+    document.getElementsByClassName('waiting-room')[0].style.display='inline';
     socket.emit('newGame');
 }
 

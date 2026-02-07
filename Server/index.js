@@ -58,6 +58,7 @@ io.on('connection', (socket) => {
                     }
                 } else {
                     io.to(lobby.id).emit("newDisconnect", lobby.playerSockets.length);
+                    sockets.get(lobby.playerSockets[0])?.emit('isHost'); // The socket should always exist
                 }
             }
         }
@@ -77,6 +78,7 @@ io.on('connection', (socket) => {
             socket.join(lobby.id);
             l.sockets[socket.id] = lobby;
             socket.emit('joinedGame', lobby);
+            socket.emit('isHost');
             console.log(socket.id + ' created game: ' + lobby.id);//
         }
     });
@@ -97,7 +99,7 @@ io.on('connection', (socket) => {
 
     socket.on('start', ()=> {
         const lobby = l.sockets[socket.id];
-        if (lobby !== undefined && lobby.game === undefined) {
+        if (lobby !== undefined && lobby.game === undefined && lobby.playerSockets[0] === socket.id) {
             lobby.game = new g.Game(lobby);
 
             lobby.playerSockets.forEach(p => sockets.get(p)?.emit('gameStart', lobby.game.sanitized(p)));

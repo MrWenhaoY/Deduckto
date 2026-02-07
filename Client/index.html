@@ -19,11 +19,11 @@
             <button class="home-button" onclick="newGame()">Create New Game</button>
             <button class="home-button" onclick="showJoin()">Join Existing Game</button>
         </div>
-        <div class="screen-lobby elementToFadeIn">
+        <!-- <div class="screen-lobby elementToFadeIn">
             <h1>Game ID: <span id="game-id"></span></h1>
             <p>Players Present: <span id="num-players">0</span></p>
-            <button class="home-button" onclick="startGame()">START</button>
-        </div>
+            <button  class="home-button" onclick="startGame()">START</button>
+        </div> -->
         <div class="join-screen elementToFadeIn">
             <h1>Input Code:</h1>
             <div id="join-box">
@@ -33,8 +33,9 @@
         </div>
         <div class="waiting-room elementToFadeIn">
             <h1>Game ID: <span id="game-id-2"></span></h1>
-            <p>Players Present: <span id="num-players-2">0</span></p>
-            <button class="home-button" onclick="startGame()">READY</button>
+            <p>Players Present: <span id="num-players">0</span></p>
+            <button id="start-button" class="home-button" onclick="startGame()" style="display:none;">START</button>
+            <p id="wait-message"><i>Waiting for host to start the game...</i></p>
             <p>Controls:<br>
                 Click on a card in your hand to play it. <br>
                 Use the selectors to choose the properties of your guess.<br>
