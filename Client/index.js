@@ -151,13 +151,13 @@ function loadGame() {
         elem.innerText = "❤️".repeat(STARTING_LIVES - p.guesses);
 
         elem = getElementByUniqueClass("yes"+i);
-        generateList(elem, p.yes, false);
+        generateList(elem, p.yes, false, i === playerIndex ? "medium" : null);
         elem = getElementByUniqueClass("no"+i);
-        generateList(elem, p.no, false);
+        generateList(elem, p.no, false, i === playerIndex ? "medium" : null);
 
         if (Array.isArray(p.hand)) {
             elem = getElementByUniqueClass("hand"+i);
-            generateList(elem, p.hand, i === playerIndex);
+            generateList(elem, p.hand, i === playerIndex, i === playerIndex ? "big" : null);
         }
     });
 
@@ -170,15 +170,16 @@ function showPreview() {
     elem.innerHTML = theme.parse(guess);
 }
 
-function generateList(slot, arr, playable) {
+function generateList(slot, arr, playable, size) {
     slot.innerHTML = "";
     arr.forEach((card, i) => {
         const elem = document.createElement("span");
         elem.innerHTML = theme.parse(card) + " ";
         if (playable) {
             elem.setAttribute("onclick", "playCard("+i+")");
-            elem.firstChild.classList.add("playable", "push", "big");
+            elem.firstChild.classList.add("playable", "push");
         }
+        if (size) elem.firstChild.classList.add(size);
         slot.appendChild(elem);
     });
 }
@@ -248,7 +249,7 @@ socket.on('cardPlayed', (data) => {
             player.hand.push(data.cardDrawn);
             console.log("Drawn card: " + data.cardDrawn);
         }
-        generateList(document.getElementById("hand"), player.hand, true);
+        generateList(document.getElementById("hand"), player.hand, true, "big");
     }
         
     if (!data.draw) {
@@ -261,7 +262,7 @@ socket.on('cardPlayed', (data) => {
 
     // Display card
     const slot = getElementByUniqueClass((data.pile ? "yes" : "no") + data.playerIndex);
-    generateList(slot, player[data.pile ? "yes" : "no"], false);
+    generateList(slot, player[data.pile ? "yes" : "no"], false, data.playerIndex === playerIndex ? "medium" : null);
 
     updateTurn(data.newTurn);
 });

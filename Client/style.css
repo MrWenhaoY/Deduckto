@@ -72,6 +72,10 @@ body {
     z-index: 4;
 }
 
+.card.medium {
+    width: 85px;
+}
+
 .card.big {
     width: 95px;
 }
