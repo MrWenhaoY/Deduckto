@@ -1,5 +1,6 @@
 const socket = io();
 let theme = undefined;
+let themeName = "animals"
 let game = undefined;
 let playerIndex = -1;
 let timeout = null;
@@ -9,6 +10,13 @@ const SCROLL_THRESHOLD = 10; // Pixels
 
 function getElementByUniqueClass(className) {
     return document.getElementsByClassName(className)[0];
+}
+
+const themeSelector = document.getElementById("theme-selector");
+for (key in THEMES) {
+    const option = makeElement(themeSelector, "", "option");
+    option.textContent = key;
+    option.value = key;
 }
 
 document.getElementById('join-code').addEventListener('keydown', function(event) {
@@ -57,7 +65,8 @@ socket.on('gameStart', (gameState) => {
     document.getElementById("main-action-area").classList.add("player"+playerIndex);
 
     // Load theme
-    theme = new ThemeLoader("maple", game.N);
+    themeName = themeSelector.value;
+    theme = new ThemeLoader(themeName, game.N);
 
     document.getElementById('start-menu').style.display = 'none';
     document.getElementsByClassName('waiting-room')[0].style.display = 'none';

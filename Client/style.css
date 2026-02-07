@@ -326,6 +326,13 @@ body {
     border: 1px solid gray;
 }
 
+#theme-selector-container {
+    position: absolute;
+    bottom: 15px; /* Distance from the bottom edge */
+    left: 15px;   /* Distance from the left edge */
+    display: inline-block;
+}
+
 .center-buttons {
     padding: 20px;
     align-content: center;
