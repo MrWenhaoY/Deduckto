@@ -324,7 +324,7 @@ select {
     align-items: center;
     display: flex;
     justify-content: center;
-    border: 1px solid gray;
+    border: 2px solid var(--hand-color);
 }
 
 #theme-selector-container {
