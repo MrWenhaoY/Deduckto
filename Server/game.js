@@ -102,7 +102,7 @@ class Game {
         const player = this.players[playerIndex];
         const card = player.hand[cardIndex];
         const nextPlayer = this.players[(playerIndex + 1) % this.NUM_PLAYERS]
-        if (!card || nextPlayer.yes.length > 0 || nextPlayer.no.length > 0) return FAILURE;
+        if (!isValidCard(card) || nextPlayer.yes.length > 0 || nextPlayer.no.length > 0) return FAILURE;
 
         // Play the card if valid
         if (match(card, nextPlayer.secret)) {
@@ -127,7 +127,7 @@ class Game {
 
         const player = this.players[playerIndex];
         const card = player.hand[cardIndex];
-        if (!card) return FAILURE;
+        if (!isValidCard(card)) return FAILURE;
 
         player.hand.splice(cardIndex, 1);
         const pile = match(card, player.secret);
