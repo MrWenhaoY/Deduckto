@@ -68,15 +68,23 @@ body {
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     background-color: #fff;
-    transition: margin 0.3s ease, transform 0.2s ease-out, border-color 0.3s ease, box-shadow 0.2s ease-out;
-    cursor: pointer;
+    transition: margin 0.3s ease, transform 0.2s ease-out, border-color 0.3s ease, box-shadow 0.2s ease-out, z-index 0.3s linear;
+    z-index: 4;
 }
 
 .card.expandable:hover {
     transform: scale(2);
-    z-index: 100; /* Pops to the front */
+    z-index: 100;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    transition: margin 0.3s ease, transform 0.2s ease-out, border-color 0.3s ease, box-shadow 0.2s ease-out;
+}
+
+.expandable.push:hover {
     margin: 0 25px;
+}
+
+.card.playable {
+    cursor: pointer;
 }
 
 /* The three layers of a card*/
@@ -90,7 +98,6 @@ body {
     pointer-events: none; /* Helps hover stay smooth */
 }
 
-/* Layer ordering to control overlap */
 .layer0 { z-index: 1; }
 .layer1 { z-index: 2; }
 .layer2 { z-index: 3; }
@@ -385,6 +392,6 @@ body {
     box-shadow: 0 0 15px rgba(255, 140, 0, 0.6);
     background-color: rgba(255, 140, 0, 0.05) !important; /* Slight tint */
     position: relative;
-    transition: all 0.4s ease;
+    /* transition: all 0.4s ease; */
     animation: pulse-glow 2s infinite;
 }

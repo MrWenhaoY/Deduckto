@@ -17,7 +17,7 @@ class ThemeLoader {
         } else if (this.data.type === "image") {
             this.parse = (card) => {
                 if (card === null) card = NULLCARD;
-                let html = "<div class='card noselect'>";
+                let html = "<div class='card noselect expandable'>";
                 [0, 1, 2].forEach(i => {
                     html += "<img src='Assets/";
                     html += this.data["cat"+i+"_root"] + this.data["cat"+i+"_parse"](card[i]) + "' ";

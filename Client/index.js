@@ -177,7 +177,7 @@ function generateList(slot, arr, playable) {
         elem.innerHTML = theme.parse(card) + " ";
         if (playable) {
             elem.setAttribute("onclick", "playCard("+i+")");
-            elem.firstChild.classList.add("expandable");
+            elem.firstChild.classList.add("playable", "push");
         }
         slot.appendChild(elem);
     });
