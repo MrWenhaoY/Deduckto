@@ -22,7 +22,7 @@ body {
 
 #game-container {
     grid-template-columns: 1fr 3fr 1fr 3fr;
-    grid-template-rows: 165px 1fr;
+    grid-template-rows: 1fr 165px;
     gap: 10px;
     height: 100%;
 }
