@@ -364,6 +364,8 @@ function joinGame() {
 }
 
 function newGame() {
+    document.getElementById('start-button').style.display = 'inline';
+    document.getElementById('wait-message').style.display = 'none';
     document.getElementsByClassName('center-buttons')[0].style.display='none';
     document.getElementsByClassName('waiting-room')[0].style.display='inline';
     socket.emit('newGame');
