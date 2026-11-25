@@ -24,6 +24,21 @@ const THEMES = {
     //     cat1_names: digits,
     //     cat2_names: COMMONGREEK
     // },
+        animals: {
+        name: "animals",
+        type: "image",
+        max_size: 7,
+        cat0_root: "location/",
+        cat0_parse: (i) => i >= 0 ? "location" + i + ".png" : "location_unknown.png",
+        cat0_names: ["Mountains", "Library", "Pier", "Park", "City", "Acquarium", "Desert"],
+        cat1_root: "animals/",
+        cat1_parse: (i) => i >= 0 ? "animal" + i + ".png" : "person_unknown.png",
+        cat1_names: ["Pig", "Pigeon", "Bear", "Fox", "Dog", "Cat", "Rabbit"],
+        cat2_root: "disguise/",
+        cat2_parse: (i) => i >= 0 ? "disguise" + i + ".png" : "blank.png",
+        cat2_names: ["Hat", "Wig", "Bandana", "Mask", "Monocle", "Mustache", "Sunglasses"],
+        toText(card) {return this.cat1_names[card[1]] + " wearing " + this.cat2_names[card[2]] + " in the " + this.cat0_names[card[0]]}
+    },
     maple: {
         name: "maple",
         type: "image",
@@ -39,19 +54,4 @@ const THEMES = {
         cat2_names: ["Water Bottle", "iPad", "Rocket", "Clarinet", "Flask", "Cookie", "Chessboard"],
         toText(card) {return this.cat0_names[card[0]] + " " + this.cat1_names[card[1]] + " with " + this.cat2_names[card[2]]}
     },
-    animals: {
-        name: "animals",
-        type: "image",
-        max_size: 7,
-        cat0_root: "location/",
-        cat0_parse: (i) => i >= 0 ? "location" + i + ".png" : "location_unknown.png",
-        cat0_names: ["Mountains", "Library", "Pier", "Park", "City", "Acquarium", "Desert"],
-        cat1_root: "animals/",
-        cat1_parse: (i) => i >= 0 ? "animal" + i + ".png" : "person_unknown.png",
-        cat1_names: ["Pig", "Pigeon", "Bear", "Fox", "Dog", "Cat", "Rabbit"],
-        cat2_root: "disguise/",
-        cat2_parse: (i) => i >= 0 ? "disguise" + i + ".png" : "blank.png",
-        cat2_names: ["Hat", "Wig", "Bandana", "Mask", "Monocle", "Mustache", "Sunglasses"],
-        toText(card) {return this.cat1_names[card[1]] + " wearing " + this.cat2_names[card[2]] + " in the " + this.cat0_names[card[0]]}
-    }
 }
